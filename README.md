@@ -7,7 +7,11 @@ Tarayıcıda çalışan, kurulum gerektirmeyen, **tam kapsamlı** bir zengin met
 - **Zengin metin biçimlendirme:** kalın, italik, altı çizili, üstü çizili, alt/üst simge, yazı tipi, boyut, yazı/arka plan rengi, başlıklar (H1–H4), alıntı, kod bloğu, satır aralığı (1.0 / 1.15 / 1.5 / 2.0)
 - **Düzen araçları:** madde işaretli / numaralı listeler, hizalama (sol, orta, sağ, iki yana), girinti artırma/azaltma, büyük/küçük/başlık/cümle düzenine dönüştürme
 - **Ekleme:** bağlantı, resim (yerel dosyadan), tablo (başlık seçenekli), yatay çizgi, sayfa sonu, özel karakter (para birimi, matematik, ok, şekil, Yunan…), emoji, bugünün tarihi / şimdiki saat
-- **İmza:** fare veya dokunmatik ekranla çizilebilen, renk / kalınlık / şeffaf arka plan ayarlı, belgeye PNG olarak gömülen dijital imza
+- **İmza (Draw / Type / Upload):** üç moddan biriyle imza oluşturabilirsiniz:
+  - **Çiz:** fare, kalem veya dokunmatik ekranla — renk ve kalınlık ayarı, şeffaf arka plan, vuruş vuruş **geri al**, **Pointer Events** tabanlı akıcı (quadratic-bezier) çizim
+  - **Yaz:** adınızı yazın, birden çok el yazısı stili arasından seçin, renk ve boyut ayarı
+  - **Yükle:** mevcut bir imza görüntüsünü (PNG / JPG / GIF / WEBP, en fazla 5 MB) yükleyin
+  - Tüm modlarda belgeye PNG olarak eklenir
 - **Dışa aktarma / Dosya:** yeni, aç (`.html` / `.txt`), HTML olarak kaydet, düz metin olarak kaydet, **Markdown olarak kaydet**, **PDF olarak dışa aktar** (sayfa boyutu + yön + kenar boşluğu ayarlı), yazdır
 - **Görünüm:** yakınlaştırma (%50–%250), koyu / açık tema, tam ekran, kelime sayımı ayrıntıları (kelime, karakter, cümle, paragraf, okuma süresi), klavye kısayolları yardımı
 - **Diğer:** geri al / yinele, bul ve değiştir (büyük/küçük duyarlılığı), otomatik kaydetme (`localStorage`), yazım denetimi aç/kapat, yapıştırılan içeriğin güvenlik için temizlenmesi

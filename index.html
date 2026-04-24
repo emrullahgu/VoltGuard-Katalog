@@ -241,27 +241,67 @@
         <button class="modal-close" data-close aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body">
-        <p class="hint">Aşağıdaki alana fare veya dokunmatik ekranla imzanızı çizin.</p>
-        <div class="signature-canvas-wrap">
-          <canvas id="signatureCanvas" width="600" height="220" aria-label="İmza çizim alanı"></canvas>
+        <div class="sig-tabs" role="tablist">
+          <button type="button" class="sig-tab active" role="tab" aria-selected="true" data-sig-tab="draw">✍ Çiz</button>
+          <button type="button" class="sig-tab" role="tab" aria-selected="false" data-sig-tab="type">⌨ Yaz</button>
+          <button type="button" class="sig-tab" role="tab" aria-selected="false" data-sig-tab="upload">📷 Yükle</button>
         </div>
-        <div class="signature-controls">
-          <label>
-            Kalem Rengi
-            <input type="color" id="sigColor" value="#0b2447" />
+
+        <!-- Draw tab -->
+        <div class="sig-panel active" data-sig-panel="draw" role="tabpanel">
+          <p class="hint">Aşağıdaki alana fare, kalem veya dokunmatik ekranla imzanızı çizin.</p>
+          <div class="signature-canvas-wrap">
+            <canvas id="signatureCanvas" width="600" height="220" aria-label="İmza çizim alanı"></canvas>
+          </div>
+          <div class="signature-controls">
+            <label>
+              Kalem Rengi
+              <input type="color" id="sigColor" value="#0b2447" />
+            </label>
+            <label>
+              Kalınlık
+              <input type="range" id="sigWidth" min="1" max="8" value="2.5" step="0.5" />
+            </label>
+            <label class="chk">
+              <input type="checkbox" id="sigTransparent" checked />
+              Şeffaf arka plan
+            </label>
+            <div class="grow"></div>
+            <button type="button" class="btn small" id="sigUndo" title="Son vuruşu geri al">↶ Geri Al</button>
+            <button type="button" class="btn small" id="sigClear">Temizle</button>
+          </div>
+        </div>
+
+        <!-- Type tab -->
+        <div class="sig-panel" data-sig-panel="type" role="tabpanel">
+          <p class="hint">Adınızı yazın, ardından bir el yazısı stili seçin.</p>
+          <label class="field">
+            <span>İmza metni</span>
+            <input type="text" id="sigTypeText" maxlength="80" placeholder="Adınızı yazın" autocomplete="off" />
           </label>
-          <label>
-            Kalınlık
-            <input type="range" id="sigWidth" min="1" max="8" value="2.5" step="0.5" />
-          </label>
-          <label class="chk">
-            <input type="checkbox" id="sigTransparent" checked />
-            Şeffaf arka plan
-          </label>
+          <div class="sig-font-list" id="sigFontList" role="listbox" aria-label="Yazı tipi"></div>
+          <div class="signature-controls">
+            <label>
+              Renk
+              <input type="color" id="sigTypeColor" value="#0b2447" />
+            </label>
+            <label>
+              Boyut
+              <input type="range" id="sigTypeSize" min="24" max="72" value="44" step="1" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Upload tab -->
+        <div class="sig-panel" data-sig-panel="upload" role="tabpanel">
+          <p class="hint">Bir imza görüntüsü seçin (PNG, JPG, GIF veya WEBP). Dosya tarayıcınızdan ayrılmaz.</p>
+          <input type="file" id="sigUploadInput" accept="image/png,image/jpeg,image/gif,image/webp" />
+          <div class="sig-upload-preview" id="sigUploadPreview" aria-live="polite">
+            <span class="placeholder">Henüz görüntü seçilmedi.</span>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn" id="sigClear" type="button">Temizle</button>
         <div class="grow"></div>
         <button class="btn" data-close type="button">İptal</button>
         <button class="btn primary" id="sigInsert" type="button">Belgeye Ekle</button>

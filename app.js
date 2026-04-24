@@ -616,6 +616,22 @@ ${innerHtml}
   // ----- Signature -----
   // Module-level callback for signature canvas resize, set up in setupSignatureModal.
   let signatureResize = null;
+  // Which tab is active in the signature modal ('draw' | 'type' | 'upload').
+  let signatureMode = 'draw';
+  // Last valid image dataURL chosen via the Upload tab.
+  let signatureUploadDataUrl = null;
+
+  // Signature fonts offered in the Type tab.
+  // We stick to widely-available system fonts (incl. cursive fallbacks) so no
+  // external network requests / CDNs are needed.
+  const SIGNATURE_FONTS = [
+    { label: 'Cursive',  css: '"Segoe Script", "Lucida Handwriting", "Apple Chancery", cursive' },
+    { label: 'Script',   css: '"Brush Script MT", "Brush Script Std", cursive' },
+    { label: 'Formal',   css: '"Monotype Corsiva", "Apple Chancery", "URW Chancery L", cursive' },
+    { label: 'Italic',   css: 'italic 1em Georgia, "Times New Roman", serif' },
+    { label: 'Classic',  css: 'bold italic 1em "Times New Roman", Times, serif' },
+    { label: 'Modern',   css: '500 1em "Segoe UI", "Helvetica Neue", sans-serif' },
+  ];
 
   function setupSignatureModal() {
     const canvas = $('#signatureCanvas');
@@ -624,12 +640,34 @@ ${innerHtml}
     const colorInput = $('#sigColor');
     const widthInput = $('#sigWidth');
 
+    // Offscreen ink-only buffer: we mirror every stroke here on a transparent
+    // background so we can rebuild the visible canvas losslessly when the
+    // user toggles "transparent background".
+    let inkLayer = null;
+    let inkCtx = null;
+
+    // Stroke history on the ink layer for undo.
+    const strokeHistory = [];
     let drawing = false;
+    let activePointerId = null;
     let hasInk = false;
     let lastX = 0, lastY = 0;
+    let midX = 0, midY = 0;
+
+    function ensureInkLayer() {
+      if (!inkLayer || inkLayer.width !== canvas.width || inkLayer.height !== canvas.height) {
+        inkLayer = document.createElement('canvas');
+        inkLayer.width = canvas.width;
+        inkLayer.height = canvas.height;
+        inkCtx = inkLayer.getContext('2d');
+        const ratio = window.devicePixelRatio || 1;
+        inkCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        inkCtx.lineCap = 'round';
+        inkCtx.lineJoin = 'round';
+      }
+    }
 
     function resizeCanvas() {
-      // Keep the drawing buffer crisp for the displayed CSS size.
       const rect = canvas.getBoundingClientRect();
       const ratio = window.devicePixelRatio || 1;
       const w = Math.max(1, Math.floor(rect.width));
@@ -637,6 +675,12 @@ ${innerHtml}
       canvas.width = w * ratio;
       canvas.height = h * ratio;
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      // New dimensions invalidate the ink layer + history.
+      inkLayer = null; inkCtx = null;
+      strokeHistory.length = 0;
+      hasInk = false;
       redrawBackground();
     }
 
@@ -649,80 +693,297 @@ ${innerHtml}
       }
     }
 
+    // Repaint the visible canvas = current background + ink layer composited on top.
+    function repaint() {
+      redrawBackground();
+      if (inkLayer) {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(inkLayer, 0, 0);
+        ctx.restore();
+      }
+    }
+
     function clearSignature() {
       hasInk = false;
+      strokeHistory.length = 0;
+      inkLayer = null; inkCtx = null;
       redrawBackground();
+    }
+
+    function undoStroke() {
+      if (!strokeHistory.length || !inkCtx) return;
+      strokeHistory.pop();
+      // Reset ink layer and replay remaining snapshots.
+      inkCtx.clearRect(0, 0, inkLayer.width, inkLayer.height);
+      if (strokeHistory.length) {
+        inkCtx.save();
+        inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+        inkCtx.putImageData(strokeHistory[strokeHistory.length - 1], 0, 0);
+        inkCtx.restore();
+        hasInk = true;
+      } else {
+        hasInk = false;
+      }
+      repaint();
     }
 
     function pointerPos(e) {
       const rect = canvas.getBoundingClientRect();
+      if (typeof e.clientX === 'number' && !Number.isNaN(e.clientX)) {
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      }
       if (e.touches && e.touches[0]) {
         return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
       }
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      return { x: 0, y: 0 };
+    }
+
+    function applyStrokeStyle(c) {
+      c.strokeStyle = colorInput.value;
+      c.fillStyle = colorInput.value;
+      c.lineWidth = parseFloat(widthInput.value) || 2.5;
     }
 
     function startDraw(e) {
-      e.preventDefault();
+      ensureInkLayer();
+      if (e.cancelable !== false && e.preventDefault) e.preventDefault();
+      if (typeof e.pointerId === 'number') {
+        activePointerId = e.pointerId;
+        if (canvas.setPointerCapture) {
+          try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      }
       drawing = true;
       const p = pointerPos(e);
-      lastX = p.x; lastY = p.y;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = colorInput.value;
-      ctx.lineWidth = parseFloat(widthInput.value) || 2.5;
-      // Put a dot so single-click leaves a mark.
+      lastX = midX = p.x;
+      lastY = midY = p.y;
+      applyStrokeStyle(ctx);
+      applyStrokeStyle(inkCtx);
+      // Dot so a single tap leaves a mark — on both layers.
       ctx.beginPath();
       ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, Math.PI * 2);
-      ctx.fillStyle = colorInput.value;
       ctx.fill();
+      inkCtx.beginPath();
+      inkCtx.arc(p.x, p.y, inkCtx.lineWidth / 2, 0, Math.PI * 2);
+      inkCtx.fill();
       hasInk = true;
     }
     function moveDraw(e) {
       if (!drawing) return;
-      e.preventDefault();
+      if (typeof e.pointerId === 'number' && activePointerId !== null && e.pointerId !== activePointerId) return;
+      if (e.cancelable !== false && e.preventDefault) e.preventDefault();
       const p = pointerPos(e);
-      ctx.strokeStyle = colorInput.value;
-      ctx.lineWidth = parseFloat(widthInput.value) || 2.5;
+      applyStrokeStyle(ctx);
+      applyStrokeStyle(inkCtx);
+      // Quadratic smoothing: draw through the previous midpoint using the
+      // previous raw point as control, landing on the new midpoint.
+      const newMidX = (lastX + p.x) / 2;
+      const newMidY = (lastY + p.y) / 2;
       ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(p.x, p.y);
+      ctx.moveTo(midX, midY);
+      ctx.quadraticCurveTo(lastX, lastY, newMidX, newMidY);
       ctx.stroke();
+      inkCtx.beginPath();
+      inkCtx.moveTo(midX, midY);
+      inkCtx.quadraticCurveTo(lastX, lastY, newMidX, newMidY);
+      inkCtx.stroke();
       lastX = p.x; lastY = p.y;
+      midX = newMidX; midY = newMidY;
       hasInk = true;
     }
-    function endDraw() { drawing = false; }
+    function endDraw(e) {
+      if (!drawing) return;
+      drawing = false;
+      if (typeof e?.pointerId === 'number' && canvas.releasePointerCapture) {
+        try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+      }
+      activePointerId = null;
+      // Snapshot the ink layer so undo can rewind to this state.
+      try {
+        if (inkCtx) {
+          strokeHistory.push(inkCtx.getImageData(0, 0, inkLayer.width, inkLayer.height));
+          if (strokeHistory.length > 50) strokeHistory.shift();
+        }
+      } catch (_) { /* getImageData may fail in headless test environments */ }
+    }
 
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', moveDraw);
-    window.addEventListener('mouseup', endDraw);
-    canvas.addEventListener('touchstart', startDraw, { passive: false });
-    canvas.addEventListener('touchmove', moveDraw, { passive: false });
-    canvas.addEventListener('touchend', endDraw);
+    // Prefer Pointer Events (mouse + pen + touch in one API); fall back to
+    // the classic mouse/touch pair for older browsers.
+    if (window.PointerEvent) {
+      canvas.addEventListener('pointerdown', startDraw);
+      canvas.addEventListener('pointermove', moveDraw);
+      canvas.addEventListener('pointerup', endDraw);
+      canvas.addEventListener('pointercancel', endDraw);
+      canvas.addEventListener('pointerleave', endDraw);
+    } else {
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', endDraw);
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', endDraw);
+      canvas.addEventListener('touchcancel', endDraw);
+    }
 
-    transparentChk.addEventListener('change', () => {
-      // Preserve strokes when toggling: snapshot, redo background, restore strokes.
-      const snap = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      redrawBackground();
-      ctx.putImageData(snap, 0, 0);
-    });
+    transparentChk.addEventListener('change', repaint);
 
     $('#sigClear').addEventListener('click', clearSignature);
+    $('#sigUndo').addEventListener('click', undoStroke);
 
-    $('#sigInsert').addEventListener('click', () => {
-      if (!hasInk) {
-        alert('Lütfen önce imzanızı çizin.');
+    // ---------- Type tab ----------
+    const typeText = $('#sigTypeText');
+    const typeColor = $('#sigTypeColor');
+    const typeSize = $('#sigTypeSize');
+    const fontList = $('#sigFontList');
+    let chosenFontIdx = 0;
+
+    function fontSampleSize() { return 32; }
+
+    function renderFontList() {
+      fontList.innerHTML = '';
+      const sample = (typeText.value || '').trim() || 'Örnek İmza';
+      SIGNATURE_FONTS.forEach((f, i) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = sample;
+        b.title = f.label;
+        b.style.font = `${fontSampleSize()}px ${stripFontSize(f.css)}`;
+        if (i === chosenFontIdx) b.classList.add('active');
+        b.addEventListener('click', () => {
+          chosenFontIdx = i;
+          renderFontList();
+        });
+        fontList.appendChild(b);
+      });
+    }
+    function stripFontSize(css) {
+      // Remove any explicit em/px size from the font shorthand so we can apply our own.
+      return css.replace(/\b\d+(?:\.\d+)?(?:em|px)\s+/g, '');
+    }
+    typeText.addEventListener('input', renderFontList);
+
+    // ---------- Upload tab ----------
+    const uploadInput = $('#sigUploadInput');
+    const uploadPreview = $('#sigUploadPreview');
+    const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+
+    uploadInput.addEventListener('change', () => {
+      signatureUploadDataUrl = null;
+      uploadPreview.innerHTML = '';
+      const f = uploadInput.files && uploadInput.files[0];
+      if (!f) {
+        const ph = document.createElement('span');
+        ph.className = 'placeholder';
+        ph.textContent = 'Henüz görüntü seçilmedi.';
+        uploadPreview.appendChild(ph);
         return;
       }
-      // If transparent, export PNG as-is (canvas is already transparent).
-      // If not, export with the white background we drew.
-      const dataUrl = canvas.toDataURL('image/png');
+      if (!/^image\/(png|jpeg|gif|webp)$/i.test(f.type)) {
+        alert('Lütfen PNG, JPG, GIF veya WEBP formatında bir görüntü seçin.');
+        uploadInput.value = '';
+        return;
+      }
+      if (f.size > MAX_UPLOAD_BYTES) {
+        alert('Görüntü çok büyük (en fazla 5 MB).');
+        uploadInput.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = String(reader.result || '');
+        // Defense in depth: sanitizer already enforces this, but validate early
+        // so the user sees feedback immediately.
+        if (!/^data:image\/(png|jpeg|gif|webp);/i.test(url)) {
+          alert('Görüntü okunamadı.');
+          return;
+        }
+        const img = new Image();
+        img.alt = 'Yüklenen imza önizlemesi';
+        img.onload = () => {
+          signatureUploadDataUrl = url;
+          uploadPreview.innerHTML = '';
+          uploadPreview.appendChild(img);
+        };
+        img.onerror = () => {
+          signatureUploadDataUrl = null;
+          alert('Görüntü yüklenemedi.');
+        };
+        img.src = url;
+      };
+      reader.onerror = () => alert('Dosya okunamadı.');
+      reader.readAsDataURL(f);
+    });
+
+    // ---------- Tab switching ----------
+    $$('.sig-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        signatureMode = tab.dataset.sigTab;
+        $$('.sig-tab').forEach(t => {
+          const on = t === tab;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        $$('.sig-panel').forEach(p => {
+          p.classList.toggle('active', p.dataset.sigPanel === signatureMode);
+        });
+        if (signatureMode === 'draw') {
+          // Canvas has no layout while the panel is hidden; resize now that it is visible.
+          requestAnimationFrame(() => signatureResize && signatureResize());
+        } else if (signatureMode === 'type') {
+          renderFontList();
+        }
+      });
+    });
+
+    // ---------- Insert into document ----------
+    function renderTypedSignature() {
+      const text = (typeText.value || '').trim();
+      if (!text) return null;
+      const size = parseInt(typeSize.value, 10) || 44;
+      const color = typeColor.value;
+      const font = SIGNATURE_FONTS[chosenFontIdx] || SIGNATURE_FONTS[0];
+      const fontStr = `${size}px ${stripFontSize(font.css)}`;
+
+      const pad = Math.round(size * 0.3);
+      const meas = document.createElement('canvas');
+      const mctx = meas.getContext('2d');
+      mctx.font = fontStr;
+      const width = Math.max(1, Math.ceil(mctx.measureText(text).width));
+      const height = Math.ceil(size * 1.6);
+      const out = document.createElement('canvas');
+      out.width = width + pad * 2;
+      out.height = height + pad;
+      const octx = out.getContext('2d');
+      octx.font = fontStr;
+      octx.fillStyle = color;
+      octx.textBaseline = 'middle';
+      octx.fillText(text, pad, out.height / 2);
+      return out.toDataURL('image/png');
+    }
+
+    $('#sigInsert').addEventListener('click', () => {
+      let dataUrl = null;
+      let altText = 'İmza';
+      if (signatureMode === 'draw') {
+        if (!hasInk) { alert('Lütfen önce imzanızı çizin.'); return; }
+        dataUrl = canvas.toDataURL('image/png');
+      } else if (signatureMode === 'type') {
+        dataUrl = renderTypedSignature();
+        if (!dataUrl) { alert('Lütfen imzanızı yazın.'); return; }
+        altText = 'İmza: ' + typeText.value.trim();
+      } else if (signatureMode === 'upload') {
+        if (!signatureUploadDataUrl) { alert('Lütfen önce bir görüntü seçin.'); return; }
+        dataUrl = signatureUploadDataUrl;
+        altText = 'İmza (yüklenen görüntü)';
+      }
+      if (!dataUrl) return;
 
       const wrap = document.createElement('span');
       wrap.className = 'signature';
       const img = document.createElement('img');
       img.src = dataUrl;
-      img.alt = 'İmza';
+      img.alt = altText;
       wrap.appendChild(img);
 
       focusEditor();
@@ -731,11 +992,20 @@ ${innerHtml}
       closeModal($('#signatureModal'));
     });
 
+    // Populate the initial font list so the Type tab is ready on first view.
+    renderFontList();
+
     // Expose resize so openSignatureModal can call it after the modal is visible.
-    signatureResize = () => { resizeCanvas(); clearSignature(); };
+    signatureResize = resizeCanvas;
   }
 
   function openSignatureModal() {
+    // Reset upload state each time the modal is opened.
+    signatureUploadDataUrl = null;
+    const up = $('#sigUploadInput'); if (up) up.value = '';
+    const pv = $('#sigUploadPreview');
+    if (pv) pv.innerHTML = '<span class="placeholder">Henüz görüntü seçilmedi.</span>';
+
     openModal('#signatureModal');
     // Must resize after the element is visible so getBoundingClientRect is correct.
     requestAnimationFrame(() => { if (signatureResize) signatureResize(); });
