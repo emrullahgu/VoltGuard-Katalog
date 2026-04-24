@@ -52,26 +52,33 @@
   main.paper th{background:#f5f7ff;color:#0b2447}
   main.paper tr:nth-child(even) td{background:#fafbff}
 
-  /* Gorsel boyutlandirma: iri ekran goruntulerini makul tavana sabitle */
-  main.paper p > img{
+  /* Gorsel boyutlandirma: TUM icerik gorsellerini tek tavana sabitle */
+  main.paper img{
     display:block;
-    margin:14px auto !important;
-    max-width:min(480px, 100%) !important;
+    margin:12px auto !important;
+    max-width:520px !important;
     width:auto !important;
-    height:auto;
-    max-height:320px;
+    height:auto !important;
+    max-height:300px !important;
     object-fit:contain;
     border-radius:6px;
-    box-shadow:0 2px 10px rgba(11,36,71,.12);
+    box-shadow:0 2px 10px rgba(11,36,71,.10);
   }
-  main.paper img[src*="Sertifikalar/"]{
-    max-width:min(260px, 100%) !important;
-    max-height:320px;
+  /* Kucuk/ozel istisnalar */
+  main.paper .cover img,
+  main.paper .letterhead img,
+  main.paper img[alt="VoltGuard"]{
+    display:inline-block;
+    margin:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    box-shadow:none !important;
+    border-radius:10px;
   }
-  main.paper img[src*="ayrica/referanslar"]{
-    max-width:min(680px, 100%) !important;
-    max-height:none;
-  }
+  main.paper img[src*="Sertifikalar/"]{max-width:260px !important;max-height:320px !important}
+  main.paper img[src*="ayrica/referanslar"]{max-width:680px !important;max-height:420px !important}
+  /* Sayfa-sonu etiketi icindeki imge */
+  main.paper .page-break img{display:none !important}
 
   main.paper .page-break{height:0;margin:28px 0;border-top:1px dashed #c8cfdd;position:relative}
   main.paper .page-break::after{content:"⸺ sayfa sonu ⸺";position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#fff;color:#8891a8;font-size:10.5px;letter-spacing:2px;padding:0 10px;text-transform:uppercase}
@@ -88,17 +95,33 @@
   }
 
   @media print{
-    @page{size:A4;margin:16mm 14mm}
-    body{background:#fff}
+    @page{size:A4;margin:14mm 12mm}
+    html,body{background:#fff !important;margin:0;padding:0}
     .topbar,aside.toc,.totop{display:none !important}
-    .wrap{display:block}
-    main.paper{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}
+    .wrap{display:block;max-width:none;margin:0;padding:0}
+    main.paper{max-width:none;width:100%;margin:0;padding:0;box-shadow:none;border-radius:0;background:#fff}
     main.paper .page-break{height:0;margin:0;border:0;break-after:page;page-break-after:always}
     main.paper .page-break::after{display:none}
     h1,h2,h3{break-after:avoid;page-break-after:avoid}
-    table,tr,img{break-inside:avoid;page-break-inside:avoid}
-    main.paper p > img{max-width:min(380px,100%) !important;max-height:260px !important;box-shadow:none !important}
-    main.paper img[src*="Sertifikalar/"]{max-width:min(220px,100%) !important;max-height:280px !important}
+    table,tr{break-inside:avoid;page-break-inside:avoid}
+    /* Print'te gorsel: hepsi ayni kucuk tavan */
+    main.paper img{
+      max-width:11cm !important;
+      max-height:8cm !important;
+      box-shadow:none !important;
+      page-break-inside:avoid;
+      break-inside:avoid;
+    }
+    main.paper img[src*="Sertifikalar/"]{max-width:7cm !important;max-height:9cm !important}
+    main.paper img[src*="ayrica/referanslar"]{max-width:15cm !important;max-height:11cm !important}
+    main.paper .cover img,main.paper .letterhead img{max-width:none !important;max-height:none !important}
+    /* Kapak yuksekligi */
+    main.paper .cover{min-height:25cm !important;border-radius:0 !important;margin:0 !important;padding:28px 32px !important}
+    /* Kart icleri bolunmesin */
+    main.paper div[style*="page-break-inside:avoid"],
+    main.paper div[style*="page-break-inside: avoid"]{break-inside:avoid;page-break-inside:avoid}
+    /* Link renkleri ve ok mu? */
+    a{color:inherit;text-decoration:none}
   }
 </style>
 </head>
@@ -121,7 +144,7 @@
   </aside>
 
   <main class="paper" id="paper">
-<div style="display:flex;align-items:center;gap:16px;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #0b2447;">
+<div class="letterhead" style="display:flex;align-items:center;gap:16px;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #0b2447;">
         <img src="logo.png" alt="VoltGuard" style="height:64px;width:auto;flex-shrink:0;border-radius:8px;" />
         <div style="flex:1;text-align:center;">
           <strong style="font-size:13px;color:#0b2447;text-transform:uppercase;letter-spacing:.4px;display:block;line-height:1.5;">VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi</strong>
@@ -131,7 +154,7 @@
       </div>
 
       <!-- =============== KAPAK SAYFASI =============== -->
-      <div style="page-break-after:always;break-after:page;min-height:24cm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#0b2447 0%,#1a3a75 55%,#2a5dff 100%);color:#fff;padding:40px 40px 30px;border-radius:10px;margin:0 0 10px;position:relative;overflow:hidden;">
+      <div class="cover" style="page-break-after:always;break-after:page;min-height:26cm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#0b2447 0%,#1a3a75 55%,#2a5dff 100%);color:#fff;padding:40px 40px 30px;border-radius:10px;margin:0 0 10px;position:relative;overflow:hidden;">
         <!-- Dekoratif ışık efekti -->
         <div contenteditable="false" aria-hidden="true" style="position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,207,92,.22) 0%,rgba(255,207,92,0) 70%);pointer-events:none;"></div>
         <div contenteditable="false" aria-hidden="true" style="position:absolute;bottom:-100px;left:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(42,93,255,.35) 0%,rgba(42,93,255,0) 70%);pointer-events:none;"></div>
