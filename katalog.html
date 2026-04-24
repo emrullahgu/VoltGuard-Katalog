@@ -134,7 +134,7 @@
   </div>
   <div class="grow"></div>
   <a class="btn btn-ghost" href="index.html" title="Metin düzenleyici moduna geç">✎ Editör</a>
-  <button type="button" class="btn-pdf" onclick="window.print()" title="Yazdırma penceresinden 'PDF olarak kaydet' seçin">📄 PDF İndir</button>
+  <button type="button" id="btnPdf" class="btn-pdf" title="HTML'i A4 PDF'e dönüştür">📄 PDF İndir</button>
 </div>
 
 <div class="wrap">
@@ -144,14 +144,6 @@
   </aside>
 
   <main class="paper" id="paper">
-<div class="letterhead" style="display:flex;align-items:center;gap:16px;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #0b2447;">
-        <img src="logo.png" alt="VoltGuard" style="height:64px;width:auto;flex-shrink:0;border-radius:8px;" />
-        <div style="flex:1;text-align:center;">
-          <strong style="font-size:13px;color:#0b2447;text-transform:uppercase;letter-spacing:.4px;display:block;line-height:1.5;">VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi</strong>
-          <span style="font-size:12px;color:#555;display:block;margin-top:4px;">Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir</span>
-          <span style="font-size:12px;color:#555;display:block;margin-top:2px;">Karşıyaka VD · Vkn: 9251324900</span>
-        </div>
-      </div>
 
       <!-- =============== KAPAK SAYFASI =============== -->
       <div class="cover" style="page-break-after:always;break-after:page;min-height:26cm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#0b2447 0%,#1a3a75 55%,#2a5dff 100%);color:#fff;padding:40px 40px 30px;border-radius:10px;margin:0 0 10px;position:relative;overflow:hidden;">
@@ -1979,6 +1971,17 @@
 
 <button class="totop" id="toTop" title="Başa dön" aria-label="Başa dön">↑</button>
 
+<!-- PDF yukleme overlay -->
+<div id="pdfOverlay" style="display:none;position:fixed;inset:0;background:rgba(11,36,71,.88);z-index:9999;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:'Segoe UI',Arial,sans-serif;">
+  <div style="width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top-color:#ffcf5c;border-radius:50%;animation:spin 1s linear infinite;"></div>
+  <div id="pdfStatus" style="margin-top:18px;font-size:14px;letter-spacing:.5px;">PDF hazırlanıyor…</div>
+  <div style="margin-top:6px;font-size:12px;color:#cdd5e7;">Sayfalar A4 formatında bölünüyor, lütfen bekleyin.</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- html2pdf.js (html2canvas + jsPDF paketli) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
 (function(){
   var paper = document.getElementById('paper');
@@ -2015,6 +2018,96 @@
   }, {passive:true});
   toTop.addEventListener('click', function(){
     window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // =========================================================
+  //  PDF Export: html2pdf.js ile A4 dogrudan cikti
+  //  - .page-break elemanlari once sayfa sonu
+  //  - img/table/h2/h3/karti icten bolme
+  //  - Tum bolumler tek PDF'de birlesir
+  // =========================================================
+  var pdfBtn = document.getElementById('btnPdf');
+  var overlay = document.getElementById('pdfOverlay');
+  var pdfStatus = document.getElementById('pdfStatus');
+
+  function showOverlay(msg){ overlay.style.display='flex'; if(msg) pdfStatus.textContent=msg; }
+  function hideOverlay(){ overlay.style.display='none'; }
+
+  pdfBtn && pdfBtn.addEventListener('click', function(){
+    if(typeof html2pdf === 'undefined'){
+      alert('PDF kutuphanesi yuklenemedi. Lutfen internet baglantinizi kontrol edin.');
+      return;
+    }
+    showOverlay('PDF hazırlanıyor…');
+
+    // Klonla - orijinal DOM degismesin
+    var source = paper.cloneNode(true);
+
+    // Klondaki herseyi PDF icin optimize et
+    // 1. Sayfa sonu etiketlerini (ekran icin) temizle
+    source.querySelectorAll('.page-break').forEach(function(pb){
+      pb.style.cssText = 'height:0;margin:0;padding:0;border:0;page-break-after:always;break-after:page;';
+    });
+    // 2. Tum page-break-inside:avoid'leri html2pdf'in taniyacagi classa cevir
+    source.querySelectorAll('[style*="page-break-inside:avoid"],[style*="page-break-inside: avoid"]').forEach(function(el){
+      el.classList.add('pdf-avoid-break');
+    });
+    // 3. Kapak min-height'ini PDF A4'e uygun sabitle
+    var cover = source.querySelector('.cover');
+    if(cover){
+      cover.style.minHeight = '25.5cm';
+      cover.style.borderRadius = '0';
+      cover.style.margin = '0';
+    }
+
+    // Gecici render konteyneri (ekranda gorunmesin)
+    var holder = document.createElement('div');
+    holder.style.cssText = 'position:fixed;left:-10000px;top:0;width:19cm;background:#fff;padding:0;';
+    holder.appendChild(source);
+    document.body.appendChild(holder);
+
+    var opt = {
+      margin:       [10, 10, 12, 10], // mm: top, left, bottom, right
+      filename:     'VoltGuard-Katalog-2026.pdf',
+      image:        { type: 'jpeg', quality: 0.95 },
+      html2canvas:  {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        letterRendering: true,
+        logging: false
+      },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+      pagebreak:    {
+        mode: ['css', 'legacy'],
+        before: '.page-break',
+        avoid: ['img', 'table', 'tr', 'h2', 'h3', '.pdf-avoid-break']
+      }
+    };
+
+    pdfStatus.textContent = 'Sayfalar hazırlanıyor…';
+    html2pdf().set(opt).from(source).toPdf().get('pdf').then(function(pdf){
+      // Toplam sayfa numarasi footer'a ekle
+      var total = pdf.internal.getNumberOfPages();
+      for(var i=1;i<=total;i++){
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(120,125,140);
+        var w = pdf.internal.pageSize.getWidth();
+        var h = pdf.internal.pageSize.getHeight();
+        pdf.text('VoltGuard Kurumsal Katalog 2026', 10, h - 5);
+        pdf.text('Sayfa ' + i + ' / ' + total, w - 25, h - 5);
+      }
+    }).save().then(function(){
+      document.body.removeChild(holder);
+      hideOverlay();
+    }).catch(function(err){
+      console.error(err);
+      document.body.removeChild(holder);
+      hideOverlay();
+      alert('PDF olusturulurken bir hata olustu: ' + err.message);
+    });
   });
 })();
 </script>
