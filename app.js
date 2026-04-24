@@ -518,7 +518,7 @@ ${innerHtml}
         const a = document.createElement('a');
         a.setAttribute('href', url);
         a.textContent = text || url;
-        if (/^https?:$/i.test((new URL(url, window.location.href)).protocol)) {
+        if (['http:', 'https:'].includes((new URL(url, window.location.href)).protocol)) {
           a.target = '_blank';
           a.rel = 'noopener noreferrer';
         }
@@ -1118,7 +1118,7 @@ ${innerHtml}
           case 'i': case 'em':     s += `*${inner}*`; break;
           case 'u':                s += `<u>${inner}</u>`; break;
           case 's': case 'strike': case 'del': s += `~~${inner}~~`; break;
-          case 'code':             s += '`' + c.textContent.replace(/`/g, '\\`') + '`'; break;
+          case 'code':             s += '`' + c.textContent.replace(/\\/g, '\\\\').replace(/`/g, '\\`') + '`'; break;
           case 'a': {
             const href = c.getAttribute('href') || '';
             s += `[${inner}](${href})`;
