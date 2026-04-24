@@ -418,19 +418,35 @@ ${innerHtml}
     openModal('#linkModal');
     setTimeout(() => $('#linkUrl').focus(), 30);
   }
+  // Safe link protocols accepted by the link dialog.
+  const SAFE_LINK_PROTOCOLS = new Set(['http:', 'https:', 'ftp:', 'mailto:', 'tel:']);
+
   function setupLinkModal() {
     $('#linkInsert').addEventListener('click', () => {
       const text = $('#linkText').value.trim();
       let url = $('#linkUrl').value.trim();
       if (!url) return;
-      // Basic URL safety: reject javascript: and other dangerous schemes.
-      const lower = url.toLowerCase();
-      if (/^\s*(javascript|data|vbscript|file):/i.test(lower)) {
-        alert('Bu URL şeması güvenlik nedeniyle kabul edilmiyor.');
-        return;
-      }
-      if (!/^([a-z]+:)?\/\//i.test(url) && !url.startsWith('mailto:') && !url.startsWith('#') && !url.startsWith('/')) {
-        url = 'https://' + url;
+
+      // Fragment / same-page anchor is allowed as-is.
+      if (!url.startsWith('#')) {
+        // If there's no scheme at all, prepend https:// so "example.com" works.
+        if (!/^[a-z][a-z0-9+.-]*:/i.test(url) && !url.startsWith('/')) {
+          url = 'https://' + url;
+        }
+
+        // Validate via the URL API — CodeQL recognizes this sanitizer pattern.
+        let parsed;
+        try {
+          parsed = new URL(url, window.location.href);
+        } catch (err) {
+          alert('Geçersiz URL.');
+          return;
+        }
+        if (!SAFE_LINK_PROTOCOLS.has(parsed.protocol)) {
+          alert('Bu URL şeması güvenlik nedeniyle kabul edilmiyor.');
+          return;
+        }
+        url = parsed.href;
       }
 
       focusEditor();
@@ -441,10 +457,12 @@ ${innerHtml}
         exec('createLink', url);
       } else {
         const a = document.createElement('a');
-        a.href = url;
+        a.setAttribute('href', url);
         a.textContent = text || url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+        if (/^https?:$/i.test((new URL(url, window.location.href)).protocol)) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
         insertNodeAtCaret(a);
       }
       // Enforce target/rel on created links
@@ -741,7 +759,8 @@ ${innerHtml}
     if (/^(https?|ftp):/i.test(v)) return true;
     // data:image/... only when explicitly allowed (for <img>).
     // Note: svg+xml is intentionally excluded because SVG can contain scripts.
-    if (allowDataImage && /^data:image\/(png|jpe?g|gif|webp|bmp);/i.test(v)) return true;
+    // Valid data URLs may use either ';' (with params like base64) or ',' (direct).
+    if (allowDataImage && /^data:image\/(png|jpe?g|gif|webp|bmp)[;,]/i.test(v)) return true;
     return false;
   }
 
