@@ -146,14 +146,14 @@
   <main class="paper" id="paper">
 
       <!-- =============== KAPAK SAYFASI =============== -->
-      <div class="cover" style="min-height:26cm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#0b2447 0%,#1a3a75 55%,#2a5dff 100%);color:#fff;padding:40px 40px 30px;border-radius:10px;margin:0 0 10px;position:relative;overflow:hidden;">
+      <div class="cover" style="min-height:24cm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#0b2447 0%,#1a3a75 55%,#2a5dff 100%);color:#fff;padding:36px 40px 26px;border-radius:10px;margin:0 0 10px;position:relative;overflow:hidden;page-break-after:always;break-after:page;">
         <!-- Dekoratif ışık efekti -->
         <div contenteditable="false" aria-hidden="true" style="position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,207,92,.22) 0%,rgba(255,207,92,0) 70%);pointer-events:none;"></div>
         <div contenteditable="false" aria-hidden="true" style="position:absolute;bottom:-100px;left:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(42,93,255,.35) 0%,rgba(42,93,255,0) 70%);pointer-events:none;"></div>
 
         <!-- Üst şerit -->
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1;">
-          <img src="logo.png" alt="VoltGuard" style="height:72px;width:auto;background:#fff;padding:10px;border-radius:10px;" />
+          <img src="logo.png" alt="VoltGuard" style="height:46px;width:auto;background:#fff;padding:6px;border-radius:8px;" />
           <div style="text-align:right;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ffcf5c;">
             Kurumsal Tanıtım Kataloğu<br/>
             <span style="color:#cdd5e7;letter-spacing:1px;">2026 Edisyon</span>
@@ -162,12 +162,12 @@
 
         <!-- Ana başlık -->
         <div style="text-align:center;position:relative;z-index:1;">
-          <h1 style="font-size:64px;margin:0 0 6px;letter-spacing:4px;color:#fff;font-weight:700;line-height:1;">VOLTGUARD</h1>
-          <div style="width:100px;height:3px;background:#ffcf5c;margin:16px auto 20px;"></div>
-          <p style="font-size:18px;margin:0 0 8px;color:#cdd5e7;letter-spacing:1px;font-weight:300;">
+          <h1 style="font-size:52px;margin:0 0 6px;letter-spacing:4px;color:#fff;font-weight:700;line-height:1;">VOLTGUARD</h1>
+          <div style="width:90px;height:3px;background:#ffcf5c;margin:14px auto 18px;"></div>
+          <p style="font-size:16px;margin:0 0 8px;color:#cdd5e7;letter-spacing:1px;font-weight:300;">
             ELEKTRİK · OTOMASYON · ELEKTRONİK · MEKANİK
           </p>
-          <p style="font-size:15px;margin:18px auto 0;max-width:520px;color:#e4e8f2;line-height:1.6;font-style:italic;">
+          <p style="font-size:14px;margin:16px auto 0;max-width:460px;color:#e4e8f2;line-height:1.6;font-style:italic;">
             Sanayi tesisleri için güvenli, sürdürülebilir ve anahtar teslim teknik çözümler
           </p>
         </div>
@@ -184,8 +184,6 @@
           </div>
         </div>
       </div>
-
-      <div class="page-break" contenteditable="false"></div>
 
       <!-- =============== KURUMSAL PROFİL =============== -->
       <div style="text-align:center;margin:20px 0 24px;">
@@ -2061,24 +2059,38 @@
       // Icerigi klonla
       var source = paper.cloneNode(true);
 
-      // Sayfa sonu isaretlerini PDF'in anlayacagi hale getir
+      // --- BOS SAYFA FIX ---
+      // .page-break div'lerini silip, bir sonraki elemana break-before uygula.
+      // Bos div'ler html2pdf'te fantom sayfa olusturabiliyor.
       source.querySelectorAll('.page-break').forEach(function(pb){
-        pb.style.cssText = 'height:0;margin:0;padding:0;border:0;page-break-after:always;break-after:page;';
+        var next = pb.nextElementSibling;
+        if(next){
+          next.style.pageBreakBefore = 'always';
+          next.style.breakBefore = 'page';
+          next.classList.add('pdf-page-start');
+        }
+        pb.remove();
       });
+
+      // page-break-inside:avoid'leri html2pdf'in tanidigi classa ekle
       source.querySelectorAll('[style*="page-break-inside:avoid"],[style*="page-break-inside: avoid"]').forEach(function(el){
         el.classList.add('pdf-avoid-break');
       });
-      // Kapak: kenar yuvarlakligi ve margin PDF icin sifirla
+
+      // Kapak: tek A4 sayfaya sigsin
       var cov = source.querySelector('.cover');
       if(cov){
-        cov.style.minHeight = '24.5cm';
+        cov.style.minHeight = '24cm';
+        cov.style.maxHeight = '24cm';
         cov.style.borderRadius = '0';
         cov.style.margin = '0';
         cov.style.pageBreakAfter = 'always';
         cov.style.breakAfter = 'page';
+        cov.style.pageBreakInside = 'avoid';
+        cov.style.breakInside = 'avoid';
       }
 
-      // Gorunur ama ekran disi render konteyneri (html2canvas icin saglam)
+      // Gorunmez render konteyneri
       var holder = document.createElement('div');
       holder.setAttribute('id','pdf-render-holder');
       holder.style.cssText = 'position:absolute;left:-9999px;top:0;width:190mm;background:#fff;padding:0;font-family:\'Segoe UI\',Arial,sans-serif;color:#1a1f2e;line-height:1.65;';
@@ -2101,7 +2113,7 @@
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
         pagebreak:    {
           mode: ['css', 'legacy'],
-          before: '.page-break',
+          before: '.pdf-page-start',
           avoid: ['img', 'table', 'tr', 'h2', 'h3', '.pdf-avoid-break']
         }
       };
