@@ -511,8 +511,15 @@ ${innerHtml}
       for (const node of toProcess) {
         if (!node.nodeValue) continue;
         if (re.test(node.nodeValue)) {
-          node.nodeValue = node.nodeValue.replace(re, () => { replaced++; return repl; });
-          if (!all) break;
+          if (all) {
+            // Global regex: count each match.
+            node.nodeValue = node.nodeValue.replace(re, () => { replaced++; return repl; });
+          } else {
+            // Non-global regex: replace at most once.
+            node.nodeValue = node.nodeValue.replace(re, repl);
+            replaced = 1;
+            break;
+          }
         }
         re.lastIndex = 0;
       }
@@ -732,14 +739,20 @@ ${innerHtml}
     if (/^(#|\/|\.\.?\/|mailto:|tel:)/i.test(v)) return true;
     // http/https/ftp
     if (/^(https?|ftp):/i.test(v)) return true;
-    // data:image/... only when explicitly allowed (for <img>)
-    if (allowDataImage && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp);/i.test(v)) return true;
+    // data:image/... only when explicitly allowed (for <img>).
+    // Note: svg+xml is intentionally excluded because SVG can contain scripts.
+    if (allowDataImage && /^data:image\/(png|jpe?g|gif|webp|bmp);/i.test(v)) return true;
     return false;
   }
 
   function sanitizeHtml(html) {
-    const template = document.createElement('template');
-    template.innerHTML = String(html);
+    // Parse inertly via DOMParser; the resulting document executes no scripts
+    // and performs no network activity.
+    const parsed = new DOMParser().parseFromString(
+      '<!doctype html><html><body>' + String(html) + '</body></html>',
+      'text/html'
+    );
+    const root = parsed.body;
 
     const walk = (node) => {
       const children = Array.from(node.childNodes);
@@ -804,17 +817,21 @@ ${innerHtml}
             child.removeAttribute(attr.name);
             continue;
           }
-          // target=_blank must have rel=noopener
+          // target=_blank must have rel including noopener + noreferrer.
           if (tag === 'a' && name === 'target' && /_blank/i.test(val)) {
-            child.setAttribute('rel', 'noopener noreferrer');
+            const existing = (child.getAttribute('rel') || '')
+              .split(/\s+/).filter(Boolean);
+            const needed = ['noopener', 'noreferrer'];
+            for (const n of needed) if (!existing.some(e => e.toLowerCase() === n)) existing.push(n);
+            child.setAttribute('rel', existing.join(' '));
           }
         }
 
         walk(child);
       }
     };
-    walk(template.content);
-    return template.innerHTML;
+    walk(root);
+    return root.innerHTML;
   }
 
   // ----- Keyboard shortcuts -----
