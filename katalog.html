@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VoltGuard — Kurumsal Tanıtım Kataloğu 2026</title>
-<meta name="description" content="VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Ltd. Şti. — Kurumsal tanıtım kataloğu. Elektrik, otomasyon, SCADA, endüstriyel elektronik ve mekanik sistem hizmetleri." />
+<meta name="description" content="VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Ltd. Şti. — Kurumsal tanıtım kataloğu." />
 <meta name="theme-color" content="#0b2447" />
 <meta property="og:title" content="VoltGuard Kurumsal Kataloğu 2026" />
 <meta property="og:description" content="Elektrik · Otomasyon · Elektronik · Mekanik mühendislik hizmetleri" />
@@ -14,7 +14,7 @@
 <style>
   *,*::before,*::after{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;color:#1a1f2e;background:#eef1f6;line-height:1.6}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;color:#1a1f2e;background:#eef1f6;line-height:1.65}
   a{color:#2a5dff}
   img{max-width:100%;height:auto}
 
@@ -26,6 +26,8 @@
   .topbar button:hover,.topbar a.btn:hover{background:#1a3a75}
   .topbar .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.25)}
   .topbar .btn-ghost:hover{background:rgba(255,255,255,.08)}
+  .topbar .btn-pdf{background:#e63946}
+  .topbar .btn-pdf:hover{background:#b82936}
 
   .wrap{display:grid;grid-template-columns:260px 1fr;max-width:1400px;margin:0 auto}
   aside.toc{position:sticky;top:58px;align-self:start;height:calc(100vh - 58px);overflow-y:auto;padding:24px 18px;background:#fafbff;border-right:1px solid #dfe3eb;font-size:13.5px}
@@ -42,10 +44,34 @@
   main.paper h1,main.paper h2,main.paper h3{color:#0b2447;line-height:1.25}
   main.paper h2{margin-top:2em;padding-bottom:.3em;border-bottom:2px solid #e4e8f2}
   main.paper h3{margin-top:1.6em}
+  main.paper p{margin:0 0 .9em;text-align:justify;hyphens:auto}
+  main.paper ul,main.paper ol{margin:.4em 0 1em;padding-left:1.4em}
+  main.paper li{margin-bottom:.3em}
   main.paper table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
   main.paper th,main.paper td{border:1px solid #dfe3eb;padding:8px 10px;text-align:left;vertical-align:top}
   main.paper th{background:#f5f7ff;color:#0b2447}
   main.paper tr:nth-child(even) td{background:#fafbff}
+
+  /* Gorsel boyutlandirma: iri ekran goruntulerini makul tavana sabitle */
+  main.paper p > img{
+    display:block;
+    margin:14px auto !important;
+    max-width:min(480px, 100%) !important;
+    width:auto !important;
+    height:auto;
+    max-height:320px;
+    object-fit:contain;
+    border-radius:6px;
+    box-shadow:0 2px 10px rgba(11,36,71,.12);
+  }
+  main.paper img[src*="Sertifikalar/"]{
+    max-width:min(260px, 100%) !important;
+    max-height:320px;
+  }
+  main.paper img[src*="ayrica/referanslar"]{
+    max-width:min(680px, 100%) !important;
+    max-height:none;
+  }
 
   main.paper .page-break{height:0;margin:28px 0;border-top:1px dashed #c8cfdd;position:relative}
   main.paper .page-break::after{content:"⸺ sayfa sonu ⸺";position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#fff;color:#8891a8;font-size:10.5px;letter-spacing:2px;padding:0 10px;text-transform:uppercase}
@@ -58,10 +84,11 @@
     .wrap{grid-template-columns:1fr}
     aside.toc{position:static;height:auto;border-right:0;border-bottom:1px solid #dfe3eb}
     main.paper{padding:28px 22px;margin:18px 10px}
+    main.paper p > img{max-height:260px}
   }
 
   @media print{
-    @page{size:A4;margin:18mm 16mm}
+    @page{size:A4;margin:16mm 14mm}
     body{background:#fff}
     .topbar,aside.toc,.totop{display:none !important}
     .wrap{display:block}
@@ -70,6 +97,8 @@
     main.paper .page-break::after{display:none}
     h1,h2,h3{break-after:avoid;page-break-after:avoid}
     table,tr,img{break-inside:avoid;page-break-inside:avoid}
+    main.paper p > img{max-width:min(380px,100%) !important;max-height:260px !important;box-shadow:none !important}
+    main.paper img[src*="Sertifikalar/"]{max-width:min(220px,100%) !important;max-height:280px !important}
   }
 </style>
 </head>
@@ -82,7 +111,7 @@
   </div>
   <div class="grow"></div>
   <a class="btn btn-ghost" href="index.html" title="Metin düzenleyici moduna geç">✎ Editör</a>
-  <button type="button" onclick="window.print()" title="PDF olarak yazdır / dışa aktar">🖨 Yazdır / PDF</button>
+  <button type="button" class="btn-pdf" onclick="window.print()" title="Yazdırma penceresinden 'PDF olarak kaydet' seçin">📄 PDF İndir</button>
 </div>
 
 <div class="wrap">
