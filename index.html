@@ -27,7 +27,10 @@
         <div class="menu-sep"></div>
         <button data-cmd="file-save-html" role="menuitem">HTML Olarak Kaydet <span class="shortcut">Ctrl+S</span></button>
         <button data-cmd="file-save-txt" role="menuitem">Düz Metin Olarak Kaydet</button>
-        <button data-cmd="file-print" role="menuitem">Yazdır / PDF <span class="shortcut">Ctrl+P</span></button>
+        <button data-cmd="file-save-md" role="menuitem">Markdown Olarak Kaydet</button>
+        <button data-cmd="file-export-pdf" role="menuitem">PDF Olarak Dışa Aktar <span class="shortcut">Ctrl+Shift+P</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="file-print" role="menuitem">Yazdır <span class="shortcut">Ctrl+P</span></button>
       </div>
     </div>
 
@@ -43,6 +46,11 @@
         <div class="menu-sep"></div>
         <button data-cmd="selectAll" role="menuitem">Tümünü Seç <span class="shortcut">Ctrl+A</span></button>
         <button data-cmd="find" role="menuitem">Bul ve Değiştir <span class="shortcut">Ctrl+F</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="case-upper" role="menuitem">BÜYÜK HARFE ÇEVİR</button>
+        <button data-cmd="case-lower" role="menuitem">küçük harfe çevir</button>
+        <button data-cmd="case-title" role="menuitem">Her Kelimenin İlk Harfi Büyük</button>
+        <button data-cmd="case-sentence" role="menuitem">Cümle düzeninde</button>
       </div>
     </div>
 
@@ -53,16 +61,42 @@
         <button data-cmd="insert-image" role="menuitem">Resim…</button>
         <button data-cmd="insert-table" role="menuitem">Tablo…</button>
         <button data-cmd="insert-hr" role="menuitem">Yatay Çizgi</button>
+        <button data-cmd="insert-pagebreak" role="menuitem">Sayfa Sonu (yazdırma / PDF)</button>
+        <div class="menu-sep"></div>
+        <button data-cmd="insert-symbol" role="menuitem">Özel Karakter…</button>
+        <button data-cmd="insert-emoji" role="menuitem">Emoji…</button>
+        <button data-cmd="insert-date" role="menuitem">Bugünün Tarihi</button>
+        <button data-cmd="insert-time" role="menuitem">Şimdiki Saat</button>
         <div class="menu-sep"></div>
         <button data-cmd="insert-signature" role="menuitem">İmza Ekle… <span class="shortcut">Ctrl+Alt+S</span></button>
       </div>
     </div>
 
     <div class="menu" role="none">
+      <button class="menu-btn" data-menu="format" aria-haspopup="true" aria-expanded="false">Biçim</button>
+      <div class="menu-dropdown" data-menu-for="format" role="menu">
+        <button data-cmd="lh-1" role="menuitem">Satır Aralığı: 1.0</button>
+        <button data-cmd="lh-115" role="menuitem">Satır Aralığı: 1.15</button>
+        <button data-cmd="lh-15" role="menuitem">Satır Aralığı: 1.5</button>
+        <button data-cmd="lh-2" role="menuitem">Satır Aralığı: 2.0</button>
+        <div class="menu-sep"></div>
+        <button data-cmd="removeFormat" role="menuitem">Biçimlendirmeyi Temizle</button>
+        <button data-cmd="toggle-spellcheck" role="menuitem">Yazım Denetimini Aç/Kapat</button>
+      </div>
+    </div>
+
+    <div class="menu" role="none">
       <button class="menu-btn" data-menu="view" aria-haspopup="true" aria-expanded="false">Görünüm</button>
       <div class="menu-dropdown" data-menu-for="view" role="menu">
+        <button data-cmd="zoom-in" role="menuitem">Yakınlaştır <span class="shortcut">Ctrl++</span></button>
+        <button data-cmd="zoom-out" role="menuitem">Uzaklaştır <span class="shortcut">Ctrl+-</span></button>
+        <button data-cmd="zoom-reset" role="menuitem">Yakınlaştırmayı Sıfırla <span class="shortcut">Ctrl+0</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="word-stats" role="menuitem">Kelime Sayımı Ayrıntıları…</button>
         <button data-cmd="toggle-theme" role="menuitem">Koyu / Açık Tema</button>
         <button data-cmd="toggle-fullscreen" role="menuitem">Tam Ekran <span class="shortcut">F11</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="show-shortcuts" role="menuitem">Klavye Kısayolları…</button>
       </div>
     </div>
   </nav>
@@ -158,6 +192,7 @@
 
     <div class="tool-group tool-group-right">
       <button class="tool" data-cmd="file-save-html" title="Kaydet (Ctrl+S)" aria-label="Kaydet">💾</button>
+      <button class="tool primary" data-cmd="file-export-pdf" title="PDF Olarak Dışa Aktar (Ctrl+Shift+P)" aria-label="PDF Olarak Dışa Aktar">📄 PDF</button>
       <button class="tool" data-cmd="file-print" title="Yazdır (Ctrl+P)" aria-label="Yazdır">🖨</button>
     </div>
   </div>
@@ -193,6 +228,8 @@
     <span id="charCount">0 karakter</span>
     <span class="sep">·</span>
     <span id="selectionInfo">Seçim yok</span>
+    <span class="grow"></span>
+    <span id="zoomLevel" title="Yakınlaştırma">100%</span>
   </footer>
 
   <!-- Signature modal -->
@@ -310,6 +347,137 @@
         <button class="btn" data-close type="button">Kapat</button>
         <button class="btn" id="replaceOne" type="button">Değiştir</button>
         <button class="btn primary" id="replaceAll" type="button">Tümünü Değiştir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Export modal -->
+  <div class="modal" id="pdfModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog small">
+      <div class="modal-header">
+        <h2 id="pdfTitle">PDF Olarak Dışa Aktar</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>Sayfa Boyutu</span>
+          <select id="pdfPageSize">
+            <option value="A4" selected>A4</option>
+            <option value="Letter">Letter</option>
+            <option value="Legal">Legal</option>
+            <option value="A3">A3</option>
+            <option value="A5">A5</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Yön</span>
+          <select id="pdfOrientation">
+            <option value="portrait" selected>Dikey</option>
+            <option value="landscape">Yatay</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Kenar Boşlukları (cm)</span>
+          <input type="number" id="pdfMargin" min="0" max="10" step="0.1" value="2" />
+        </label>
+        <p class="hint">Dışa aktarırken açılan yazdırma penceresinde <b>Hedef</b>'i <b>"PDF olarak kaydet"</b> olarak seçin.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">İptal</button>
+        <button class="btn primary" id="pdfExportStart" type="button">PDF Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Word stats modal -->
+  <div class="modal" id="statsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog small">
+      <div class="modal-header">
+        <h2 id="statsTitle">Kelime Sayımı Ayrıntıları</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <dl class="stats">
+          <dt>Kelime</dt><dd id="statWords">0</dd>
+          <dt>Karakter (boşluklu)</dt><dd id="statChars">0</dd>
+          <dt>Karakter (boşluksuz)</dt><dd id="statCharsNoSpace">0</dd>
+          <dt>Cümle</dt><dd id="statSentences">0</dd>
+          <dt>Paragraf</dt><dd id="statParagraphs">0</dd>
+          <dt>Okuma süresi</dt><dd id="statReading">0 dk</dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button class="btn primary" data-close type="button">Tamam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Special character / symbol picker -->
+  <div class="modal" id="symbolModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="symbolTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="symbolTitle">Özel Karakter Ekle</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="picker-tabs" id="symbolTabs" role="tablist"></div>
+        <div class="picker-grid" id="symbolGrid" role="listbox" aria-label="Özel karakterler"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji picker -->
+  <div class="modal" id="emojiModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="emojiTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="emojiTitle">Emoji Ekle</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="picker-tabs" id="emojiTabs" role="tablist"></div>
+        <div class="picker-grid emoji" id="emojiGrid" role="listbox" aria-label="Emojiler"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard shortcuts modal -->
+  <div class="modal" id="shortcutsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="shortcutsTitle">Klavye Kısayolları</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <table class="shortcuts">
+          <tr><th>Ctrl+B / I / U</th><td>Kalın / İtalik / Altı çizili</td></tr>
+          <tr><th>Ctrl+Z / Y</th><td>Geri al / Yinele</td></tr>
+          <tr><th>Ctrl+S</th><td>HTML olarak kaydet</td></tr>
+          <tr><th>Ctrl+Shift+P</th><td>PDF olarak dışa aktar</td></tr>
+          <tr><th>Ctrl+P</th><td>Yazdır</td></tr>
+          <tr><th>Ctrl+O</th><td>Dosya aç</td></tr>
+          <tr><th>Ctrl+F</th><td>Bul ve değiştir</td></tr>
+          <tr><th>Ctrl+A</th><td>Tümünü seç</td></tr>
+          <tr><th>Ctrl+Alt+S</th><td>İmza ekle</td></tr>
+          <tr><th>Ctrl+Alt+N</th><td>Yeni belge</td></tr>
+          <tr><th>Ctrl+Shift+V</th><td>Düz metin olarak yapıştır</td></tr>
+          <tr><th>Ctrl++ / Ctrl+- / Ctrl+0</th><td>Yakınlaştır / uzaklaştır / sıfırla</td></tr>
+          <tr><th>F11</th><td>Tam ekran</td></tr>
+          <tr><th>Esc</th><td>Aktif pencereyi kapat</td></tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn primary" data-close type="button">Tamam</button>
       </div>
     </div>
   </div>

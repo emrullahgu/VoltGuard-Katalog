@@ -165,6 +165,12 @@
     document.addEventListener('click', closeAllMenus);
     // Delegate menu items
     $$('.menu-dropdown').forEach(dd => {
+      // Prevent the button mousedown from stealing the editor's selection
+      // before the command runs (important for selection-dependent commands
+      // like case transforms, line height, find, etc.).
+      dd.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button[data-cmd]')) e.preventDefault();
+      });
       dd.addEventListener('click', (e) => {
         const b = e.target.closest('button[data-cmd]');
         if (!b) return;
@@ -235,6 +241,14 @@
         downloadFile('belge.txt', editor.innerText, 'text/plain;charset=utf-8');
         break;
 
+      case 'file-save-md':
+        downloadFile('belge.md', htmlToMarkdown(editor), 'text/markdown;charset=utf-8');
+        break;
+
+      case 'file-export-pdf':
+        openModal('#pdfModal');
+        break;
+
       case 'file-print':
         window.print();
         break;
@@ -253,6 +267,23 @@
       case 'insert-hr':
         exec('insertHorizontalRule');
         break;
+      case 'insert-pagebreak':
+        insertPageBreak();
+        break;
+      case 'insert-symbol':
+        saveSelection();
+        openModal('#symbolModal');
+        break;
+      case 'insert-emoji':
+        saveSelection();
+        openModal('#emojiModal');
+        break;
+      case 'insert-date':
+        insertDateTime('date');
+        break;
+      case 'insert-time':
+        insertDateTime('time');
+        break;
       case 'insert-signature':
         saveSelection();
         openSignatureModal();
@@ -262,6 +293,34 @@
         saveSelection();
         openModal('#findModal');
         $('#findText').focus();
+        break;
+
+      case 'word-stats':
+        openWordStats();
+        break;
+
+      case 'case-upper':
+      case 'case-lower':
+      case 'case-title':
+      case 'case-sentence':
+        transformCase(cmd.slice(5));
+        break;
+
+      case 'lh-1':    setLineHeight('1');    break;
+      case 'lh-115':  setLineHeight('1.15'); break;
+      case 'lh-15':   setLineHeight('1.5');  break;
+      case 'lh-2':    setLineHeight('2');    break;
+
+      case 'zoom-in':    setZoom(currentZoom + 10); break;
+      case 'zoom-out':   setZoom(currentZoom - 10); break;
+      case 'zoom-reset': setZoom(100); break;
+
+      case 'toggle-spellcheck':
+        toggleSpellcheck();
+        break;
+
+      case 'show-shortcuts':
+        openModal('#shortcutsModal');
         break;
 
       case 'toggle-theme':
@@ -724,7 +783,413 @@ ${innerHtml}
     });
   }
 
-  // Minimal HTML sanitizer using a strict tag + attribute whitelist.
+  // ----- Zoom -----
+  let currentZoom = 100;
+  function setZoom(pct) {
+    currentZoom = Math.max(50, Math.min(250, Math.round(pct)));
+    editor.style.transform = `scale(${currentZoom / 100})`;
+    const z = $('#zoomLevel');
+    if (z) z.textContent = currentZoom + '%';
+    try { localStorage.setItem('voltguard-editor-zoom', String(currentZoom)); } catch (e) {}
+  }
+  function loadZoom() {
+    try {
+      const s = parseInt(localStorage.getItem('voltguard-editor-zoom'), 10);
+      if (!isNaN(s)) setZoom(s);
+      else setZoom(100);
+    } catch (e) { setZoom(100); }
+  }
+
+  // ----- Spell check toggle -----
+  function toggleSpellcheck() {
+    const cur = editor.getAttribute('spellcheck') !== 'false';
+    editor.setAttribute('spellcheck', cur ? 'false' : 'true');
+    setSaveStatus(cur ? 'Yazım denetimi kapalı' : 'Yazım denetimi açık', '');
+  }
+
+  // ----- Case transforms -----
+  function transformCase(mode) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount || sel.isCollapsed || !editor.contains(sel.anchorNode)) {
+      // Try to recover from saved selection (menu click may have moved focus).
+      if (!restoreSelection() || window.getSelection().isCollapsed) {
+        alert('Lütfen önce dönüştürülecek metni seçin.');
+        return;
+      }
+    }
+    const sel2 = window.getSelection();
+    const text = sel2.toString();
+    if (!text) { alert('Lütfen önce dönüştürülecek metni seçin.'); return; }
+    let out;
+    switch (mode) {
+      case 'upper': out = text.toLocaleUpperCase(); break;
+      case 'lower': out = text.toLocaleLowerCase(); break;
+      case 'title':
+        out = text.toLocaleLowerCase().replace(/(^|\s|['"(\[{])(\p{L})/gu, (_, p, c) => p + c.toLocaleUpperCase());
+        break;
+      case 'sentence':
+        out = text.toLocaleLowerCase().replace(/(^|[.!?]\s+)(\p{L})/gu, (_, p, c) => p + c.toLocaleUpperCase());
+        break;
+      default: return;
+    }
+    // Use execCommand insertText to preserve undo history.
+    document.execCommand('insertText', false, out);
+    scheduleAutosave();
+    updateCounts();
+  }
+
+  // ----- Line height -----
+  function setLineHeight(lh) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !editor.contains(sel.anchorNode)) {
+      if (!restoreSelection()) return;
+    }
+    const sel2 = window.getSelection();
+    if (!sel2.rangeCount || !editor.contains(sel2.anchorNode)) return;
+
+    // Find block-level ancestors inside the editor covering the selection.
+    const BLOCK_RE = /^(p|div|h[1-6]|li|blockquote|pre|td|th)$/i;
+    const blocks = new Set();
+    function blockOf(node) {
+      let n = node;
+      while (n && n !== editor) {
+        if (n.nodeType === 1 && BLOCK_RE.test(n.tagName)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+    const range = sel2.getRangeAt(0);
+    if (range.collapsed) {
+      const b = blockOf(range.startContainer);
+      if (b) blocks.add(b);
+    } else {
+      const walker = document.createTreeWalker(editor, NodeFilter.SHOW_ELEMENT, {
+        acceptNode(n) { return BLOCK_RE.test(n.tagName) && range.intersectsNode(n) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; }
+      });
+      while (walker.nextNode()) blocks.add(walker.currentNode);
+      // Also include the starting block in case no descendant matched.
+      const b = blockOf(range.startContainer);
+      if (b) blocks.add(b);
+    }
+    blocks.forEach(b => { b.style.lineHeight = lh; });
+    scheduleAutosave();
+  }
+
+  // ----- Insert date / time -----
+  function insertDateTime(kind) {
+    const now = new Date();
+    let str;
+    if (kind === 'date') {
+      str = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    } else {
+      str = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    }
+    focusEditor();
+    document.execCommand('insertText', false, str);
+    scheduleAutosave();
+    updateCounts();
+  }
+
+  // ----- Insert page break -----
+  function insertPageBreak() {
+    focusEditor();
+    restoreSelection();
+    const hr = document.createElement('div');
+    hr.className = 'page-break';
+    hr.setAttribute('contenteditable', 'false');
+    insertNodeAtCaret(hr);
+    // Add an empty paragraph after so the cursor can continue typing.
+    const p = document.createElement('p');
+    p.innerHTML = '<br>';
+    hr.parentNode.insertBefore(p, hr.nextSibling);
+  }
+
+  // ----- Word stats -----
+  function openWordStats() {
+    const raw = (editor.innerText && editor.innerText.length ? editor.innerText : editor.textContent) || '';
+    const text = raw.replace(/\u00a0/g, ' ');
+    const trimmed = text.trim();
+    const words = trimmed.length ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+    const chars = text.length;
+    const charsNoSpace = text.replace(/\s/g, '').length;
+    // Split on sentence-ending punctuation; ignore trailing empty segments.
+    const sentences = trimmed.length ? trimmed.split(/[.!?…]+(?:\s|$)/).filter(s => s.trim().length).length : 0;
+    // Paragraphs = non-empty <p>/<h*>/<li> blocks.
+    const paragraphs = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, pre'))
+      .filter(n => (n.textContent || '').trim().length).length;
+    const readingMinutes = Math.max(1, Math.round(words / 200));
+
+    $('#statWords').textContent = words.toLocaleString();
+    $('#statChars').textContent = chars.toLocaleString();
+    $('#statCharsNoSpace').textContent = charsNoSpace.toLocaleString();
+    $('#statSentences').textContent = sentences.toLocaleString();
+    $('#statParagraphs').textContent = paragraphs.toLocaleString();
+    $('#statReading').textContent = readingMinutes + ' dk';
+    openModal('#statsModal');
+  }
+
+  // ----- Symbol / emoji pickers -----
+  const SYMBOLS = {
+    'Yazım': ['©','®','™','§','¶','†','‡','•','…','–','—','«','»','“','”','‘','’','¿','¡','°','№'],
+    'Para Birimi': ['₺','$','€','£','¥','¢','₽','₹','₩','₴','₦','₫','₱','฿','₪','₡'],
+    'Matematik': ['±','×','÷','√','∞','≈','≠','≤','≥','∑','∏','∆','∂','∫','π','Ω','µ','‰','∈','∉','⊂','⊃','∪','∩'],
+    'Oklar': ['←','→','↑','↓','↔','↕','⇐','⇒','⇑','⇓','⇔','↩','↪','↺','↻','↯'],
+    'Şekiller': ['■','□','▲','△','▼','▽','●','○','◆','◇','★','☆','♠','♣','♥','♦','✓','✔','✗','✘'],
+    'Yunan': ['α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','π','ρ','σ','τ','υ','φ','χ','ψ','ω','Α','Β','Γ','Δ','Σ','Ω'],
+  };
+  const EMOJI = {
+    'Gülen': ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔'],
+    'Jestler': ['👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤝','🙏','✍️','💪','👏'],
+    'Kalp': ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝'],
+    'Nesne': ['📄','📃','📑','📊','📈','📉','📋','📌','📍','📎','🖇️','📏','📐','✂️','🖊️','🖋️','✒️','🖌️','🖍️','📝','💼','🗂️','🗃️','🗄️','🗑️','🔒','🔓','🔑','🔐','📧','📮','📬'],
+    'İşaret': ['✅','❌','⚠️','‼️','⁉️','❓','❔','❕','❗','〰️','©️','®️','™️','🆗','🆕','🆙','🆒','🔥','⭐','🌟','✨','💡','⏰','📅','📆'],
+    'Gıda': ['🍎','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌽','🥕','🫑','🌶️','🍞','🧀','🍕','🍔','🍟','🌮','☕','🍵','🍺','🍷'],
+    'Hayvan': ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦆','🦅','🦉','🐺','🐴','🦓','🦄','🐝','🐞','🦋','🐌','🐢','🐍','🦖','🦀','🐟','🐬','🐳','🦈'],
+    'Seyahat': ['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🛵','🏍️','🚲','🛴','✈️','🚀','🛸','🚁','⛵','🚤','🛳️','🚢','🚆','🚇','🚊','🏠','🏢','🗽','🗼','🏰'],
+  };
+
+  function setupPickerModal(modalSel, tabsSel, gridSel, dataset) {
+    const tabsEl = $(tabsSel);
+    const gridEl = $(gridSel);
+    const names = Object.keys(dataset);
+    let activeTab = names[0];
+
+    function renderTabs() {
+      tabsEl.innerHTML = '';
+      names.forEach(name => {
+        const t = document.createElement('button');
+        t.type = 'button';
+        t.className = 'picker-tab' + (name === activeTab ? ' active' : '');
+        t.textContent = name;
+        t.setAttribute('role', 'tab');
+        t.addEventListener('click', () => { activeTab = name; renderTabs(); renderGrid(); });
+        tabsEl.appendChild(t);
+      });
+    }
+    function renderGrid() {
+      gridEl.innerHTML = '';
+      dataset[activeTab].forEach(ch => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = ch;
+        b.title = ch;
+        b.setAttribute('role', 'option');
+        b.addEventListener('click', () => {
+          focusEditor();
+          restoreSelection();
+          document.execCommand('insertText', false, ch);
+          scheduleAutosave();
+          updateCounts();
+          closeModal($(modalSel));
+        });
+        gridEl.appendChild(b);
+      });
+    }
+    renderTabs();
+    renderGrid();
+  }
+
+  // ----- PDF export via clean print iframe -----
+  // Page size in millimeters for CSS @page.
+  const PDF_PAGE_SIZES = {
+    'A3':     { w: 297, h: 420 },
+    'A4':     { w: 210, h: 297 },
+    'A5':     { w: 148, h: 210 },
+    'Letter': { w: 216, h: 279 },
+    'Legal':  { w: 216, h: 356 },
+  };
+
+  function setupPdfExport() {
+    $('#pdfExportStart').addEventListener('click', () => {
+      const size = $('#pdfPageSize').value;
+      const orientation = $('#pdfOrientation').value;
+      const margin = Math.max(0, Math.min(10, parseFloat($('#pdfMargin').value) || 2));
+
+      const dims = PDF_PAGE_SIZES[size] || PDF_PAGE_SIZES.A4;
+      const pageCss = orientation === 'landscape'
+        ? `${dims.h}mm ${dims.w}mm`
+        : `${dims.w}mm ${dims.h}mm`;
+
+      // Build an isolated iframe with the clean document so the user's browser
+      // can "Save as PDF" from its print dialog (supported in all modern browsers).
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('aria-hidden', 'true');
+      iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+      iframe.setAttribute('sandbox', 'allow-same-origin allow-modals');
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentDocument;
+      // Assemble the exported body from sanitized editor HTML.
+      const cleanBody = sanitizeHtml(editor.innerHTML);
+
+      doc.open();
+      doc.write('<!doctype html><html><head><meta charset="utf-8"><title>Belge</title></head><body></body></html>');
+      doc.close();
+
+      // Inject stylesheet via textContent (no HTML string -> innerHTML paths for user data).
+      const style = doc.createElement('style');
+      style.textContent = `
+        @page { size: ${pageCss}; margin: ${margin}cm; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; color: #1e2330; }
+        body { font-family: Georgia, "Times New Roman", serif; font-size: 12pt; line-height: 1.55; }
+        h1, h2, h3, h4, h5, h6 { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 1em 0 .4em; break-after: avoid; page-break-after: avoid; }
+        h1 { font-size: 22pt; } h2 { font-size: 18pt; } h3 { font-size: 15pt; } h4 { font-size: 13pt; }
+        p { margin: 0 0 .7em; orphans: 2; widows: 2; }
+        blockquote { border-left: 3px solid #2a5dff; margin: 0 0 1em; padding: .2em 1em; background: #f5f7ff; }
+        pre { background: #f1f3f7; border: 1px solid #e1e4ec; padding: 10px 12px; border-radius: 4px; overflow: hidden; white-space: pre-wrap; font-family: "Courier New", monospace; font-size: 10.5pt; }
+        ul, ol { margin: 0 0 .7em; padding-left: 1.5em; }
+        table { border-collapse: collapse; width: 100%; margin: .5em 0; break-inside: auto; }
+        tr { break-inside: avoid; page-break-inside: avoid; }
+        th, td { border: 1px solid #c9cfdc; padding: 6px 8px; vertical-align: top; }
+        th { background: #eef1f8; text-align: left; }
+        img { max-width: 100%; height: auto; }
+        hr { border: 0; border-top: 1px solid #d0d6e2; margin: 1.2em 0; }
+        a { color: #1e49d6; text-decoration: underline; }
+        .signature { display: inline-block; margin: 6px 0; max-width: 360px; }
+        .signature img { max-width: 100%; height: auto; display: block; }
+        .page-break { break-after: page; page-break-after: always; display: block; height: 0; }
+      `;
+      doc.head.appendChild(style);
+
+      // Build the body using DOMParser to avoid any innerHTML assignment with user content.
+      const parsed = new DOMParser().parseFromString(
+        '<!doctype html><html><body>' + cleanBody + '</body></html>',
+        'text/html'
+      );
+      Array.from(parsed.body.childNodes).forEach(n => {
+        doc.body.appendChild(doc.importNode(n, true));
+      });
+
+      closeModal($('#pdfModal'));
+
+      // Give the iframe layout a beat before calling print.
+      const triggerPrint = () => {
+        try {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        } catch (err) {
+          console.warn('Iframe print failed, falling back', err);
+          window.print();
+        }
+        // Clean up after the print dialog is closed.
+        const cleanup = () => {
+          setTimeout(() => {
+            if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+          }, 300);
+        };
+        if (iframe.contentWindow && iframe.contentWindow.addEventListener) {
+          iframe.contentWindow.addEventListener('afterprint', cleanup, { once: true });
+        }
+        // Safety fallback: remove after 5 minutes regardless.
+        setTimeout(cleanup, 5 * 60 * 1000);
+      };
+
+      // Wait for images inside the iframe to load so they render in the PDF.
+      const imgs = Array.from(doc.images || []);
+      if (imgs.length === 0) {
+        setTimeout(triggerPrint, 50);
+      } else {
+        let pending = imgs.length;
+        const done = () => { if (--pending <= 0) setTimeout(triggerPrint, 30); };
+        imgs.forEach(img => {
+          if (img.complete) done();
+          else { img.addEventListener('load', done); img.addEventListener('error', done); }
+        });
+        // Hard timeout in case something hangs.
+        setTimeout(triggerPrint, 3000);
+      }
+    });
+  }
+
+  // ----- HTML -> Markdown (best-effort) -----
+  function htmlToMarkdown(root) {
+    const out = [];
+    function esc(s) { return String(s).replace(/([\\`*_{}\[\]()#+\-!|>])/g, '\\$1'); }
+    function inline(node) {
+      let s = '';
+      node.childNodes.forEach(c => {
+        if (c.nodeType === 3) { s += esc(c.nodeValue); return; }
+        if (c.nodeType !== 1) return;
+        const tag = c.tagName.toLowerCase();
+        const inner = inline(c);
+        switch (tag) {
+          case 'b': case 'strong': s += `**${inner}**`; break;
+          case 'i': case 'em':     s += `*${inner}*`; break;
+          case 'u':                s += `<u>${inner}</u>`; break;
+          case 's': case 'strike': case 'del': s += `~~${inner}~~`; break;
+          case 'code':             s += '`' + c.textContent.replace(/`/g, '\\`') + '`'; break;
+          case 'a': {
+            const href = c.getAttribute('href') || '';
+            s += `[${inner}](${href})`;
+            break;
+          }
+          case 'img': {
+            const src = c.getAttribute('src') || '';
+            const alt = c.getAttribute('alt') || '';
+            s += `![${alt}](${src})`;
+            break;
+          }
+          case 'br': s += '  \n'; break;
+          default: s += inner;
+        }
+      });
+      return s;
+    }
+    function block(node, depth, listCtx) {
+      node.childNodes.forEach(c => {
+        if (c.nodeType === 3) {
+          const t = c.nodeValue.trim();
+          if (t) out.push(esc(t), '\n\n');
+          return;
+        }
+        if (c.nodeType !== 1) return;
+        const tag = c.tagName.toLowerCase();
+        const m = tag.match(/^h([1-6])$/);
+        if (m) { out.push('#'.repeat(parseInt(m[1], 10)) + ' ' + inline(c).trim(), '\n\n'); return; }
+        if (tag === 'p') { const t = inline(c).trim(); if (t) out.push(t, '\n\n'); return; }
+        if (tag === 'blockquote') { const t = inline(c).trim(); out.push(t.split('\n').map(l => '> ' + l).join('\n'), '\n\n'); return; }
+        if (tag === 'pre') { out.push('```\n' + c.textContent + '\n```\n\n'); return; }
+        if (tag === 'hr' || (tag === 'div' && c.classList.contains('page-break'))) { out.push('\n---\n\n'); return; }
+        if (tag === 'ul' || tag === 'ol') {
+          let i = 1;
+          Array.from(c.children).forEach(li => {
+            if (li.tagName.toLowerCase() !== 'li') return;
+            const prefix = tag === 'ol' ? `${i++}. ` : '- ';
+            const indent = '  '.repeat(depth);
+            out.push(indent + prefix + inline(li).trim(), '\n');
+            // Nested lists
+            Array.from(li.children).forEach(ch => {
+              if (/^(ul|ol)$/i.test(ch.tagName)) block(li, depth + 1);
+            });
+          });
+          out.push('\n');
+          return;
+        }
+        if (tag === 'table') {
+          const rows = Array.from(c.querySelectorAll('tr'));
+          if (!rows.length) return;
+          const firstCells = Array.from(rows[0].children);
+          const hasHeader = firstCells.some(td => td.tagName.toLowerCase() === 'th');
+          const cellText = td => inline(td).replace(/\|/g, '\\|').trim();
+          const header = firstCells.map(cellText);
+          out.push('| ' + header.join(' | ') + ' |\n');
+          out.push('| ' + header.map(() => '---').join(' | ') + ' |\n');
+          rows.slice(hasHeader ? 1 : 0).forEach(tr => {
+            out.push('| ' + Array.from(tr.children).map(cellText).join(' | ') + ' |\n');
+          });
+          out.push('\n');
+          return;
+        }
+        // Generic container: recurse.
+        block(c, depth);
+      });
+    }
+    block(root, 0);
+    return out.join('').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+  }
+
+
   // Unknown tags are unwrapped (children preserved as text/elements).
   // Only safe URL schemes are allowed on href/src.
   const ALLOWED_TAGS = new Set([
@@ -865,6 +1330,14 @@ ${innerHtml}
       if (e.altKey && k === 'n') {
         e.preventDefault(); handleCommand('file-new'); return;
       }
+      if (e.shiftKey && k === 'p') {
+        e.preventDefault(); handleCommand('file-export-pdf'); return;
+      }
+      // Zoom: Ctrl++ / Ctrl+- / Ctrl+0  (supports keyboards where + is Shift+=)
+      if (k === '=' || k === '+') { e.preventDefault(); handleCommand('zoom-in'); return; }
+      if (k === '-') { e.preventDefault(); handleCommand('zoom-out'); return; }
+      if (k === '0') { e.preventDefault(); handleCommand('zoom-reset'); return; }
+
       switch (k) {
         case 's': e.preventDefault(); handleCommand('file-save-html'); break;
         case 'o': e.preventDefault(); handleCommand('file-open'); break;
@@ -887,8 +1360,12 @@ ${innerHtml}
     setupTableModal();
     setupFindModal();
     setupSignatureModal();
+    setupPdfExport();
+    setupPickerModal('#symbolModal', '#symbolTabs', '#symbolGrid', SYMBOLS);
+    setupPickerModal('#emojiModal',  '#emojiTabs',  '#emojiGrid',  EMOJI);
     setupPasteHandler();
     setupShortcuts();
+    loadZoom();
 
     editor.addEventListener('input', () => { scheduleAutosave(); updateCounts(); });
     editor.addEventListener('keyup', updateToolbarState);

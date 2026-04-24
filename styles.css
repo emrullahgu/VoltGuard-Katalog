@@ -455,8 +455,92 @@ body {
     max-width: none;
     padding: 0;
     min-height: auto;
+    transform: none !important;
   }
+  .page-break { break-after: page; page-break-after: always; height: 0; display: block; }
 }
+
+/* Editor page break indicator (on-screen only) */
+.editor .page-break {
+  display: block;
+  height: 1px;
+  margin: 1.5em 0;
+  border-top: 2px dashed #b0b7c6;
+  position: relative;
+}
+.editor .page-break::after {
+  content: 'Sayfa Sonu';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: .4px;
+  color: #7a8196;
+  background: #ffffff;
+  padding: 0 8px;
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Status bar grow */
+.status-bar .grow { flex: 1; }
+#zoomLevel { font-variant-numeric: tabular-nums; }
+
+/* Stats dl */
+.stats { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; margin: 0; }
+.stats dt { color: var(--text-muted); font-size: 13px; }
+.stats dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Picker tabs + grid (symbols / emoji) */
+.picker-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.picker-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.picker-tab:hover { background: var(--surface-2); color: var(--text); }
+.picker-tab.active { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.picker-grid button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px 0;
+  cursor: pointer;
+  font-size: 20px;
+  font-family: inherit;
+  color: var(--text);
+  line-height: 1;
+  text-align: center;
+}
+.picker-grid button:hover { background: var(--surface-2); border-color: var(--border); }
+.picker-grid.emoji button { font-size: 22px; }
+
+/* Shortcuts table */
+.shortcuts { width: 100%; border-collapse: collapse; font-size: 13px; }
+.shortcuts th, .shortcuts td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+.shortcuts th { color: var(--text-muted); font-weight: 600; white-space: nowrap; width: 40%; font-family: ui-monospace, "Courier New", monospace; }
+
+/* Zoom: the editor is visually scaled; keep its layout compensated via transform-origin top center. */
+#editor { transform-origin: top center; transition: transform .08s linear; }
 
 /* Small screens */
 @media (max-width: 720px) {
