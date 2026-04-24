@@ -1,0 +1,87 @@
+Aşağıdaki gibi daha detaylı, fabrika/tesis elektrik usta işleri ve malzeme temini tarafını da kapsayacak şekilde genişletebilirsin:
+
+---
+
+## Elektrik Hizmetleri
+
+SMM hizmetlerinden trafo işletme sorumluluğuna, fabrika elektrik usta işlerinden elektrik malzeme teminine, enerji kalitesi analizinden topraklama ve yıldırımdan korunma sistemlerine kadar endüstriyel tesisler için tam kapsamlı elektrik mühendisliği ve saha uygulama çözümleri sunuyoruz.
+
+Fabrika, atölye, üretim tesisi, depo, ticari işletme ve sanayi yapılarında; keşif, projelendirme, malzeme seçimi, montaj, devreye alma, ölçüm, bakım, revizyon ve arıza giderme süreçlerini bütüncül şekilde yönetiyoruz.
+
+### Hizmet Kapsamımız
+
+**SMM Serbest Müşavir Mühendislik Hizmetleri**
+Elektrik proje onayı, teknik danışmanlık, resmi süreç takibi, uygunluk değerlendirmeleri ve mühendislik kontrol hizmetleri.
+
+**Trafo İşletme Sorumluluğu**
+Trafo merkezlerinin mevzuata uygun şekilde işletilmesi, periyodik kontrolleri, bakım takibi, raporlama ve teknik sorumluluk hizmetleri.
+
+**Fabrika Elektrik Usta İşleri**
+Üretim hatları, makineler, priz hatları, aydınlatma sistemleri, kablo tavaları, enerji dağıtım hatları, motor bağlantıları, pano bağlantıları ve saha elektrik tesisatı uygulamaları.
+
+**Elektrik Malzeme Temini**
+Projeye uygun kablo, sigorta, şalter, kontaktör, röle, pano ekipmanları, kablo kanalı, tava sistemleri, aydınlatma armatürleri, topraklama malzemeleri ve ölçüm ekipmanlarının temini.
+
+**Tercih Edilen Malzeme Markaları**
+Schneider Electric, Siemens, ABB, Legrand, Eaton, Hager, Phoenix Contact, WAGO, Weidmüller, Mutlusan, Viko, Makel, Prysmian, Hes Kablo, Öznur Kablo, Nexans, Philips, Osram, Pelsan, ACK, EAE, Günsan ve proje ihtiyacına uygun diğer kaliteli markalarla çözüm sunuyoruz.
+
+**Periyodik Kontrol ve Ölçüm Hizmetleri**
+Elektrik tesisatı uygunluk kontrolleri, pano kontrolleri, termal kamera ölçümleri, kaçak akım rölesi testleri, topraklama ölçümleri ve raporlama hizmetleri.
+
+**Harmonik Analiz ve Filtreleme Çözümleri**
+Tesisteki harmonik bozulmaların tespiti, enerji kalitesine etkilerinin analiz edilmesi, kompanzasyon ve filtreleme çözümlerinin uygulanması.
+
+**Elektrik Pano Kurulumu ve Revizyonu**
+Ana dağıtım panosu, tali pano, kompanzasyon panosu, makine panosu, otomasyon panosu ve MCC pano kurulum, bakım, revizyon ve yenileme hizmetleri.
+
+**Tesis Kurulumu, Revizyonu ve Arıza Giderme**
+Yeni tesis elektrik altyapı kurulumu, mevcut tesis revizyonları, kapasite artırımı, kablo değişimi, pano düzenleme, arıza tespiti ve hızlı müdahale hizmetleri.
+
+**Topraklama ve Yıldırımdan Korunma Sistemleri**
+Topraklama tesisatı kurulumu, ölçümü, raporlanması, paratoner sistemleri, eş potansiyel bara uygulamaları ve yıldırımdan korunma çözümleri.
+
+**Enerji Kalitesi Ölçümleri ve Raporlama**
+Gerilim düşümü, dengesiz yük, harmonik, reaktif güç, kompanzasyon performansı, güç faktörü ve enerji tüketim analizleriyle detaylı teknik raporlama.
+
+### Fabrika ve Endüstriyel Tesisler İçin Çözümler
+
+Üretim sürekliliğini korumak, enerji kayıplarını azaltmak ve elektrik altyapısını güvenli hale getirmek için fabrika elektrik sistemlerinde mühendislik ve saha uygulamasını birlikte sunuyoruz. Arıza kaynaklarını tespit ediyor, uygun malzemeyi seçiyor, montajı gerçekleştiriyor ve sistemi çalışır halde teslim ediyoruz.
+
+### Başlıca Uygulama Alanları
+
+* Fabrika elektrik tesisatı kurulumu
+* Makine enerji besleme hatları
+* Kablo tava ve kanal sistemleri
+* Pano montajı ve pano revizyonu
+* Kompanzasyon sistemleri
+* Aydınlatma tesisatı
+* Priz ve kuvvet tesisatı
+* Motor, sürücü ve otomasyon bağlantıları
+* Topraklama ve paratoner sistemleri
+* Arıza tespiti ve bakım çalışmaları
+* Elektrik malzeme keşfi ve temini
+
+---
+
+Daha kurumsal ve kısa web sitesi versiyonu şöyle olabilir:
+
+## Elektrik Hizmetleri
+
+SMM hizmetlerinden trafo işletme sorumluluğuna, fabrika elektrik usta işlerinden elektrik malzeme teminine, enerji kalitesi analizinden topraklama sistemlerine kadar endüstriyel tesisler için uçtan uca elektrik mühendisliği çözümleri sunuyoruz.
+
+Fabrika, üretim tesisi, depo ve ticari yapılarda elektrik tesisatı kurulumu, pano montajı, revizyon, bakım, arıza giderme, periyodik ölçüm ve raporlama hizmetleri sağlıyoruz. Projeye uygun kablo, pano ekipmanları, şalt malzemeleri, aydınlatma ürünleri, kablo tava sistemleri ve topraklama ekipmanlarının teminini de gerçekleştiriyoruz.
+
+Schneider Electric, Siemens, ABB, Legrand, Eaton, Hager, Phoenix Contact, WAGO, Mutlusan, Viko, Makel, Prysmian, Hes Kablo, Öznur Kablo, Nexans, Philips, Osram, Pelsan ve EAE gibi kaliteli markalarla güvenilir ve uzun ömürlü çözümler üretiyoruz.
+
+### Hizmetlerimiz
+
+* SMM Serbest Müşavir Mühendislik Hizmetleri
+* Trafo İşletme Sorumluluğu
+* Fabrika Elektrik Usta İşleri
+* Elektrik Malzeme Temini
+* Periyodik Kontrol ve Ölçüm Hizmetleri
+* Harmonik Analiz ve Filtreleme Çözümleri
+* Elektrik Pano Kurulumu ve Revizyonu
+* Tesis Kurulumu, Revizyonu ve Arıza Giderme
+* Topraklama ve Yıldırımdan Korunma Sistemleri
+* Enerji Kalitesi Ölçümleri ve Raporlama

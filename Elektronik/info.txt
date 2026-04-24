@@ -1,0 +1,544 @@
+Aşağıdaki metin, “Elektronik & Gömülü Sistemler” bölümünü otomasyon sistemleri, endüstriyel kontrol, veri toplama, sensör entegrasyonu ve özel elektronik kart tasarımı gibi başlıklarla daha detaylı hale getirir:
+
+---
+
+# Elektronik & Gömülü Sistemler
+
+Mikrodenetleyici tabanlı özel çözümlerden PCB tasarımına, IoT uygulamalarından endüstriyel veri toplama sistemlerine, otomasyon panolarından sensör ve ölçüm sistemleri entegrasyonuna kadar geniş kapsamlı elektronik mühendisliği çözümleri sunuyoruz.
+
+Endüstriyel tesisler, makineler, üretim hatları, enerji sistemleri, tarım uygulamaları, izleme sistemleri ve özel cihaz geliştirme projeleri için ihtiyaca özel elektronik donanım, gömülü yazılım ve otomasyon çözümleri geliştiriyoruz.
+
+Projelerde yalnızca kart tasarımı veya yazılım geliştirme değil; ihtiyaç analizi, sistem mimarisi, malzeme seçimi, prototip üretimi, test, devreye alma ve teknik destek süreçlerini de bütüncül şekilde ele alıyoruz.
+
+---
+
+## Gömülü Yazılım Geliştirme
+
+Mikrodenetleyici, sensör, haberleşme modülü, röle çıkışı, motor sürücü, ekran ve veri kayıt birimleriyle çalışan sistemler için gömülü yazılım geliştirme hizmetleri sunuyoruz.
+
+Bu kapsamda;
+
+* Mikrodenetleyici yazılımı geliştirme
+* Sensör okuma ve sinyal işleme algoritmaları
+* Dijital giriş/çıkış kontrolü
+* Röle, kontaktör, motor ve sürücü kontrol yazılımları
+* Zamanlayıcı, kesme ve haberleşme tabanlı yazılım yapıları
+* LCD, OLED, HMI ve ekran arayüzleri
+* Veri kayıt ve alarm sistemleri
+* Cihaz çalışma senaryolarının yazılıma aktarılması
+* Prototip yazılım geliştirme ve test süreçleri
+* Mevcut elektronik sistemlerde yazılım revizyonu
+
+gibi çalışmalar gerçekleştiriyoruz.
+
+Gömülü yazılımlarda sistemin kararlı, hızlı, güvenli ve uzun süreli çalışması hedeflenir.
+
+---
+
+## Mikrodenetleyici Tabanlı Sistemler
+
+STM, PIC, Arduino, ESP32, Raspberry Pi Pico ve benzeri mikrodenetleyici platformlarıyla ihtiyaca özel kontrol ve izleme sistemleri geliştiriyoruz.
+
+Mikrodenetleyici tabanlı sistemler;
+
+* Makine kontrol uygulamaları
+* Otomatik açma-kapama sistemleri
+* Sıcaklık, nem, basınç, seviye ve akış kontrolü
+* Enerji izleme sistemleri
+* Röle kontrollü otomasyon devreleri
+* Motor kontrol sistemleri
+* Pompa, fan, kompresör ve vana kontrol uygulamaları
+* Zaman kontrollü çalışma sistemleri
+* Kablosuz veri aktarım sistemleri
+* Uzaktan izleme ve kontrol çözümleri
+
+için kullanılabilir.
+
+Projenin ihtiyacına göre donanım, yazılım, haberleşme altyapısı ve kutulama tasarımı birlikte planlanır.
+
+---
+
+## Özel Elektronik Kart Tasarımı PCB Tasarımı
+
+Standart ürünlerin yeterli olmadığı uygulamalarda, projeye özel elektronik kart tasarımı yapıyoruz. PCB tasarım sürecinde sistemin çalışma koşulları, besleme gerilimi, giriş/çıkış sayısı, haberleşme ihtiyaçları, koruma devreleri ve montaj alanı dikkate alınır.
+
+PCB tasarım hizmetlerimiz;
+
+* Şematik devre tasarımı
+* PCB yerleşim ve hat çizimi
+* Tek katman, çift katman ve çok katmanlı kart tasarımı
+* Güç devreleri tasarımı
+* Sensör kartları
+* Röle çıkış kartları
+* Haberleşme kartları
+* Mikrodenetleyici kontrol kartları
+* Endüstriyel giriş/çıkış kartları
+* Prototip üretim dosyalarının hazırlanması
+* Gerber, BOM ve üretim dokümantasyonu
+* Kart test ve revizyon süreçleri
+
+kapsamında yürütülür.
+
+Amaç; sahada kullanılabilir, güvenilir, kompakt ve uzun ömürlü elektronik kartlar geliştirmektir.
+
+---
+
+## Endüstriyel Elektronik Çözümler
+
+Fabrika, üretim tesisi, makine ve saha uygulamalarında kullanılmak üzere endüstriyel elektronik çözümler geliştiriyoruz.
+
+Bu alanda;
+
+* Makine elektronik kontrol sistemleri
+* Endüstriyel sensör bağlantıları
+* Röle ve kontaktör kontrol devreleri
+* Motor sürücü kontrol sistemleri
+* Alarm ve uyarı sistemleri
+* Sıcaklık, basınç, seviye ve akış izleme sistemleri
+* Üretim hattı veri izleme çözümleri
+* Elektronik kart arıza tespiti
+* Kart onarım ve revizyon desteği
+* Eski sistemlerin modern elektronik altyapıya dönüştürülmesi
+
+gibi hizmetler sunulur.
+
+Endüstriyel elektronik çözümlerde amaç, işletmenin üretim sürekliliğini artırmak, arıza sürelerini azaltmak ve sistemleri daha kontrollü hale getirmektir.
+
+---
+
+## Otomasyon Sistemleri
+
+Makine, üretim hattı, tesis ve proseslerin daha verimli, kontrollü ve izlenebilir çalışması için otomasyon sistemleri geliştiriyoruz.
+
+Otomasyon çözümlerimiz;
+
+* Makine otomasyon sistemleri
+* Üretim hattı otomasyonu
+* Pompa, fan, kompresör ve motor kontrol sistemleri
+* Vana ve aktüatör kontrol uygulamaları
+* Sıcaklık, basınç, nem, seviye ve akış kontrol sistemleri
+* Zaman, sayaç ve sensör tabanlı otomasyon çözümleri
+* Röleli kontrol sistemleri
+* PLC destekli kontrol uygulamaları
+* HMI ekran arayüzleri
+* SCADA ve izleme altyapılarına veri aktarımı
+* Alarm, uyarı ve güvenlik senaryoları
+* Uzaktan izleme ve kontrol sistemleri
+
+gibi başlıkları kapsar.
+
+Otomasyon sistemlerinde hedef; insan müdahalesini azaltmak, hataları minimize etmek, enerji ve zaman tasarrufu sağlamak, üretim süreçlerini daha güvenli ve verimli hale getirmektir.
+
+---
+
+## Veri Toplama ve İzleme Sistemleri
+
+Saha cihazlarından, sensörlerden, enerji analizörlerinden, makinelerden ve proses ekipmanlarından alınan verilerin toplanması, kaydedilmesi, analiz edilmesi ve raporlanması için veri toplama sistemleri geliştiriyoruz.
+
+Bu sistemler ile;
+
+* Sıcaklık verileri izlenebilir
+* Nem, basınç, seviye ve akış değerleri takip edilebilir
+* Enerji tüketimi kaydedilebilir
+* Makine çalışma süreleri ölçülebilir
+* Üretim adetleri takip edilebilir
+* Alarm ve hata kayıtları tutulabilir
+* Uzaktan izleme ekranları oluşturulabilir
+* Günlük, haftalık ve aylık raporlar alınabilir
+* Bakım ve arıza süreçleri daha kolay takip edilebilir
+
+Veri toplama sistemleri, işletmelerin süreçlerini ölçülebilir hale getirerek daha doğru kararlar almasını sağlar.
+
+---
+
+## IoT Nesnelerin İnterneti Uygulamaları
+
+İnternet bağlantılı cihazlar, sensörler ve kontrol sistemleriyle uzaktan izleme ve yönetim çözümleri geliştiriyoruz.
+
+IoT uygulamaları kapsamında;
+
+* Kablosuz sensör sistemleri
+* Uzaktan sıcaklık, nem, basınç ve enerji izleme
+* GSM, Wi-Fi, Ethernet ve LoRa tabanlı haberleşme çözümleri
+* Bulut tabanlı veri takibi
+* Mobil uygulama veya web panel üzerinden izleme
+* Alarm ve bildirim sistemleri
+* Uzaktan cihaz açma-kapama
+* Akıllı tarım uygulamaları
+* Akıllı bina ve tesis izleme sistemleri
+* Enerji tüketim takibi
+* Makine durum izleme sistemleri
+
+gibi çözümler geliştirilebilir.
+
+IoT sistemleri sayesinde saha ekipmanları internet üzerinden takip edilebilir, veriler kayıt altına alınabilir ve işletmelere anlık kontrol imkanı sağlanabilir.
+
+---
+
+## Sensör ve Ölçüm Sistemleri Entegrasyonu
+
+Endüstriyel ve özel uygulamalarda kullanılan sensörlerin elektronik sistemlere, otomasyon altyapılarına veya veri toplama sistemlerine entegrasyonunu sağlıyoruz.
+
+Entegre edilebilen başlıca sensör ve ölçüm sistemleri:
+
+* Sıcaklık sensörleri
+* Nem sensörleri
+* Basınç sensörleri
+* Seviye sensörleri
+* Akış sensörleri
+* Mesafe sensörleri
+* Akım ve gerilim sensörleri
+* Enerji analizörleri
+* Loadcell ağırlık ölçüm sistemleri
+* Encoder ve hız sensörleri
+* Yaklaşım sensörleri
+* Manyetik sensörler
+* Gaz ve hava kalitesi sensörleri
+* Işık ve ortam ölçüm sensörleri
+
+Bu sistemler, projeye göre analog, dijital, Modbus, RS485, CAN, UART, I2C, SPI, Ethernet veya kablosuz haberleşme altyapılarıyla entegre edilebilir.
+
+---
+
+## Haberleşme ve Entegrasyon Çözümleri
+
+Elektronik ve otomasyon sistemlerinin birbirleriyle veya üst seviye yazılımlarla haberleşmesi için uygun iletişim altyapıları kurulabilir.
+
+Desteklenen haberleşme altyapıları;
+
+* RS485
+* Modbus RTU
+* Modbus TCP
+* CAN Bus
+* UART
+* I2C
+* SPI
+* Ethernet
+* Wi-Fi
+* Bluetooth
+* LoRa
+* GSM / GPRS / LTE
+* MQTT
+* HTTP API entegrasyonları
+
+Bu sayede cihazlar, makineler, sensörler, enerji analizörleri ve kontrol panelleri arasında güvenilir veri iletişimi sağlanır.
+
+---
+
+## Prototip Geliştirme ve Ürünleştirme
+
+Fikir aşamasındaki elektronik projelerin prototipe dönüştürülmesi ve saha koşullarına uygun hale getirilmesi için destek sağlıyoruz.
+
+Bu süreçte;
+
+* İhtiyaç analizi
+* Sistem mimarisi oluşturma
+* Devre tasarımı
+* Gömülü yazılım geliştirme
+* PCB tasarımı
+* Malzeme seçimi
+* Prototip üretimi
+* Test ve hata giderme
+* Kutu ve montaj planlaması
+* Saha denemeleri
+* Revizyon ve ürünleştirme süreci
+
+birlikte yürütülür.
+
+Prototip geliştirme çalışmaları, özel cihaz üretimi, makine yardımcı kontrol sistemleri, test ekipmanları, ölçüm cihazları ve izleme sistemleri için uygundur.
+
+---
+
+## Başlıca Uygulama Alanları
+
+* Fabrika otomasyon sistemleri
+* Makine kontrol sistemleri
+* Üretim hattı izleme sistemleri
+* Enerji izleme cihazları
+* Akıllı tarım sistemleri
+* Akıllı bina uygulamaları
+* Sensör tabanlı ölçüm sistemleri
+* IoT tabanlı uzaktan izleme sistemleri
+* Endüstriyel veri toplama sistemleri
+* Pompa ve motor kontrol sistemleri
+* Alarm ve uyarı sistemleri
+* Özel elektronik cihaz geliştirme
+* PCB tasarımı ve prototip üretimi
+* Eski sistemlerin elektronik modernizasyonu
+
+---
+
+## Kısa Web Sitesi Versiyonu
+
+Elektronik & Gömülü Sistemler alanında; mikrodenetleyici tabanlı özel çözümler, gömülü yazılım geliştirme, PCB tasarımı, otomasyon sistemleri, IoT uygulamaları, veri toplama ve sensör entegrasyonu hizmetleri sunuyoruz.
+
+STM, PIC, Arduino, ESP32 ve benzeri platformlarla makine kontrolü, uzaktan izleme, enerji takibi, üretim hattı veri toplama, sensör okuma, röle kontrolü ve endüstriyel otomasyon çözümleri geliştiriyoruz.
+
+Projeye özel elektronik kart tasarımı, prototip üretimi, haberleşme altyapısı, yazılım geliştirme, test ve devreye alma süreçlerini uçtan uca yöneterek sahada kullanılabilir, güvenilir ve uzun ömürlü sistemler ortaya çıkarıyoruz.
+
+### Hizmetlerimiz
+
+* Gömülü Yazılım Geliştirme
+* Mikrodenetleyici Tabanlı Sistemler
+* Özel Elektronik Kart Tasarımı PCB Tasarımı
+* Endüstriyel Elektronik Çözümler
+* Otomasyon Sistemleri
+* PLC, HMI ve SCADA Entegrasyonları
+* Veri Toplama ve İzleme Sistemleri
+* IoT Nesnelerin İnterneti Uygulamaları
+* Sensör ve Ölçüm Sistemleri Entegrasyonu
+* Haberleşme ve Cihaz Entegrasyonları
+* Prototip Geliştirme ve Ürünleştirme
+* Elektronik Kart Arıza Tespiti ve Revizyonu
+
+Aşağıdaki bölüm, verdiğin başlıkları **“Endüstriyel Otomasyon Sistemleri”** hizmeti olarak web sitesinde kullanılabilecek şekilde detaylandırılmış halidir:
+
+---
+
+# Endüstriyel Otomasyon Sistemleri
+
+Fabrika, üretim hattı, makine, proses ve tesis altyapılarında; verimliliği artırmak, insan hatasını azaltmak, enerji kullanımını optimize etmek ve sistemleri daha izlenebilir hale getirmek için endüstriyel otomasyon çözümleri sunuyoruz.
+
+PLC yazılım geliştirmeden SCADA sistemi kurulumuna, makine otomasyonundan proses kontrolüne, sürücü ve motor kontrol sistemlerinden uzaktan izleme altyapılarına kadar tüm otomasyon süreçlerini projeye özel olarak tasarlıyor, uyguluyor ve devreye alıyoruz.
+
+İhtiyaca göre Siemens, Schneider Electric, ABB, Delta, Omron, Mitsubishi, Phoenix Contact ve benzeri endüstriyel otomasyon markalarıyla çözüm geliştirerek sistemlerin güvenilir, sürdürülebilir ve sahaya uygun şekilde çalışmasını sağlıyoruz.
+
+---
+
+## PLC Yazılım Geliştirme Siemens, Schneider vb.
+
+Endüstriyel otomasyon sistemlerinin kontrol merkezi olan PLC sistemleri için projeye özel yazılım geliştirme hizmeti sunuyoruz. Makine, üretim hattı, proses, pompa, fan, kompresör, konveyör, dolum, karıştırma, tartım, seviye kontrolü ve benzeri uygulamalar için güvenilir PLC yazılımları geliştiriyoruz.
+
+PLC yazılım hizmetlerimiz kapsamında;
+
+* Siemens PLC yazılım geliştirme
+* Schneider PLC yazılım geliştirme
+* ABB, Delta, Omron ve Mitsubishi PLC uygulamaları
+* Makine çalışma senaryolarının PLC’ye aktarılması
+* Dijital ve analog giriş/çıkış yapılandırmaları
+* Sensör, switch, encoder ve saha ekipmanı entegrasyonu
+* Röle, kontaktör, valf, motor ve sürücü kontrolü
+* Alarm, hata ve emniyet senaryolarının oluşturulması
+* Otomatik ve manuel çalışma modları
+* Reçete, sayaç, zamanlayıcı ve proses kontrol algoritmaları
+* PLC program revizyonu ve optimizasyonu
+* Mevcut PLC sistemlerinde arıza tespiti ve yazılım düzenleme
+
+çalışmaları gerçekleştirilir.
+
+Amaç; tesisin veya makinenin çalışma mantığını güvenli, anlaşılır, müdahale edilebilir ve uzun vadede geliştirilebilir bir yazılım yapısına dönüştürmektir.
+
+---
+
+## SCADA Sistemi Kurulumu ve İzleme
+
+SCADA sistemleri sayesinde üretim tesisleri, makineler, enerji sistemleri ve prosesler merkezi bir ekrandan izlenebilir, kontrol edilebilir ve raporlanabilir hale gelir.
+
+SCADA sistemi kurulumu kapsamında;
+
+* SCADA ekran tasarımı
+* Proses akış diyagramlarının oluşturulması
+* Makine ve ekipman durumlarının izlenmesi
+* Anlık sıcaklık, basınç, seviye, debi, enerji ve üretim verilerinin takibi
+* Alarm ve olay kayıtlarının oluşturulması
+* Geçmiş veri kayıtları ve trend ekranları
+* Kullanıcı yetkilendirme ve operatör ekranları
+* Üretim, enerji ve bakım raporları
+* PLC, enerji analizörü, sürücü ve saha cihazlarıyla haberleşme
+* Uzaktan erişim ve izleme altyapıları
+* HMI ve SCADA entegrasyonu
+
+hizmetleri sağlanır.
+
+SCADA sistemleri, işletmelerin üretim süreçlerini daha şeffaf, ölçülebilir ve kontrol edilebilir hale getirir.
+
+---
+
+## Endüstriyel Otomasyon Projelendirme
+
+Otomasyon sistemlerinin doğru çalışması için uygulama öncesinde sistemin teknik olarak doğru planlanması gerekir. Bu nedenle projelendirme sürecinde ihtiyaç analizi, saha keşfi, ekipman seçimi, pano tasarımı, haberleşme yapısı ve kontrol senaryoları birlikte değerlendirilir.
+
+Otomasyon projelendirme kapsamında;
+
+* Saha keşfi ve ihtiyaç analizi
+* Sistem mimarisi oluşturma
+* PLC, HMI, SCADA ve sürücü seçimi
+* Giriş/çıkış listesi hazırlanması
+* Sensör ve saha ekipmanı belirleme
+* Pano tasarımına uygun ekipman planlama
+* Elektrik ve otomasyon şemalarının hazırlanması
+* Haberleşme altyapısının planlanması
+* Kontrol senaryolarının oluşturulması
+* Malzeme listesi hazırlanması
+* Proje dokümantasyonu oluşturma
+* Uygulama ve devreye alma planı hazırlama
+
+çalışmaları yürütülür.
+
+Doğru projelendirme, uygulama sırasında oluşabilecek hataları azaltır ve sistemin uzun vadeli çalışmasını kolaylaştırır.
+
+---
+
+## Makine Otomasyonu ve Proses Kontrolü
+
+Makine ve proseslerin otomatik, kontrollü ve güvenli şekilde çalışması için otomasyon sistemleri geliştiriyoruz. Üretim hattı, özel makine, dozajlama, dolum, taşıma, karıştırma, ısıtma, soğutma, tartım ve benzeri prosesler için kontrol çözümleri sunuyoruz.
+
+Bu kapsamda;
+
+* Makine çalışma senaryolarının oluşturulması
+* Otomatik, manuel ve bakım modları
+* Start-stop, acil stop ve emniyet devreleri
+* Sensör ve aktüatör kontrolü
+* Konveyör sistemleri otomasyonu
+* Dolum, dozajlama ve tartım sistemleri
+* Sıcaklık, basınç, seviye ve debi kontrolü
+* PID kontrol uygulamaları
+* Motor, pompa, fan ve vana kontrolü
+* Üretim adet ve süre takibi
+* Hata, alarm ve uyarı yönetimi
+* Operatör paneli üzerinden kontrol
+
+hizmetleri verilir.
+
+Makine otomasyonu ve proses kontrolü sayesinde üretim süreçleri daha hızlı, güvenli, tekrarlanabilir ve verimli hale gelir.
+
+---
+
+## Sürücü VFD ve Motor Kontrol Sistemleri
+
+Motorların hız, tork, yön ve çalışma senaryolarının kontrol edilmesi için sürücü sistemleri kullanılır. VFD sistemleri ile enerji verimliliği sağlanır, motorların kalkış akımı azaltılır ve proses ihtiyaçlarına göre hassas kontrol yapılabilir.
+
+Sürücü ve motor kontrol sistemleri kapsamında;
+
+* Frekans konvertörü seçimi
+* Motor gücüne uygun sürücü uygulamaları
+* Pompa, fan, kompresör ve konveyör kontrolü
+* Hız kontrolü ve yön kontrolü
+* Yumuşak kalkış ve duruş ayarları
+* PID kontrollü sürücü uygulamaları
+* Basınç, debi ve seviye kontrollü motor sistemleri
+* PLC ile sürücü haberleşmesi
+* Modbus, Profinet, Profibus, Ethernet ve analog kontrol entegrasyonları
+* Sürücü parametre ayarları
+* Motor koruma ve arıza senaryoları
+* Enerji tasarrufu odaklı motor kontrol çözümleri
+
+çalışmaları yapılır.
+
+Bu sistemler özellikle pompa istasyonları, havalandırma sistemleri, üretim hatları, konveyörler, karıştırıcılar ve proses ekipmanlarında yaygın olarak kullanılır.
+
+---
+
+## Uzaktan İzleme ve Kontrol Sistemleri
+
+Tesis, makine ve proseslerin internet veya yerel ağ üzerinden izlenmesi ve kontrol edilmesi için uzaktan izleme sistemleri geliştiriyoruz. Bu sistemler sayesinde işletmeler sahadaki ekipman durumlarını anlık olarak takip edebilir, alarm bildirimleri alabilir ve geçmiş verilere ulaşabilir.
+
+Uzaktan izleme ve kontrol çözümleri;
+
+* Web tabanlı izleme panelleri
+* Mobil uyumlu kontrol ekranları
+* PLC ve SCADA verilerinin uzaktan izlenmesi
+* Enerji tüketimi takibi
+* Makine çalışma/duruş durumlarının izlenmesi
+* Alarm ve arıza bildirimleri
+* SMS, e-posta veya mobil bildirim entegrasyonları
+* Veri kayıt ve raporlama sistemleri
+* GSM, Ethernet, Wi-Fi ve VPN tabanlı bağlantılar
+* Uzak lokasyonlardaki tesislerin merkezi izlenmesi
+* Pompa, jeneratör, trafo, üretim hattı ve çevresel ölçüm sistemlerinin takibi
+
+gibi uygulamaları kapsar.
+
+Uzaktan izleme sistemleri, özellikle birden fazla lokasyonu bulunan işletmelerde bakım, enerji yönetimi ve üretim takibi açısından büyük avantaj sağlar.
+
+---
+
+## Sistem Entegrasyonu ve Devreye Alma
+
+Otomasyon projelerinde farklı marka ve yapıdaki cihazların birbiriyle uyumlu çalışması gerekir. Bu nedenle sistem entegrasyonu ve devreye alma sürecinde PLC, HMI, SCADA, sürücü, sensör, enerji analizörü, pano ve saha ekipmanlarının birlikte çalışması sağlanır.
+
+Bu kapsamda;
+
+* PLC, HMI ve SCADA entegrasyonu
+* Sürücü ve motor kontrol entegrasyonu
+* Sensör ve saha ekipmanı bağlantıları
+* Enerji analizörü ve ölçüm cihazı entegrasyonu
+* Haberleşme protokolü ayarları
+* Modbus RTU/TCP, Profinet, Profibus, Ethernet/IP ve CAN Bus entegrasyonları
+* Pano ve saha kablolama kontrolleri
+* I/O testleri
+* Sinyal doğrulama ve ekipman testleri
+* Yazılım testleri
+* Senaryo testleri
+* Operatör eğitimi
+* Devreye alma sonrası teknik destek
+
+hizmetleri sağlanır.
+
+Devreye alma sürecinde amaç; sistemin sahada güvenli, kararlı ve kullanıcı ihtiyaçlarına uygun şekilde çalışmasını sağlamaktır.
+
+---
+
+## Kullanılan Marka ve Teknolojiler
+
+Projeye ve tesis ihtiyacına göre farklı marka ve ürünlerle çözüm geliştirilebilir.
+
+Başlıca kullanılan markalar ve teknolojiler:
+
+* Siemens PLC, HMI, SCADA ve sürücü sistemleri
+* Schneider Electric PLC, HMI ve sürücü çözümleri
+* ABB sürücü ve otomasyon ürünleri
+* Delta PLC, HMI ve sürücü sistemleri
+* Omron PLC ve kontrol sistemleri
+* Mitsubishi PLC ve servo sistemleri
+* Phoenix Contact otomasyon çözümleri
+* Weidmüller ve WAGO endüstriyel bağlantı çözümleri
+* Profinet, Profibus, Modbus RTU, Modbus TCP, Ethernet/IP
+* HMI operatör panelleri
+* SCADA ve veri izleme yazılımları
+* Endüstriyel haberleşme cihazları
+* Sensör, enkoder, loadcell ve ölçüm ekipmanları
+
+---
+
+## Başlıca Uygulama Alanları
+
+* Fabrika otomasyonu
+* Üretim hattı otomasyonu
+* Makine otomasyonu
+* Proses kontrol sistemleri
+* Pompa ve hidrofor sistemleri
+* Fan ve havalandırma sistemleri
+* Konveyör ve taşıma sistemleri
+* Dolum, dozajlama ve tartım sistemleri
+* Enerji izleme ve raporlama sistemleri
+* Arıtma tesisi otomasyonu
+* Tarımsal sulama ve sera otomasyonu
+* Kompresör ve basınç kontrol sistemleri
+* Isıtma, soğutma ve iklimlendirme otomasyonu
+* Uzaktan izleme ve alarm sistemleri
+* Mevcut otomasyon sistemlerinin revizyonu
+
+---
+
+## Kısa Web Sitesi Versiyonu
+
+Endüstriyel otomasyon alanında; PLC yazılım geliştirme, SCADA sistemi kurulumu, makine otomasyonu, proses kontrolü, sürücü ve motor kontrol sistemleri, uzaktan izleme ve sistem entegrasyonu hizmetleri sunuyoruz.
+
+Siemens, Schneider Electric, ABB, Delta, Omron ve Mitsubishi gibi endüstriyel otomasyon markalarıyla üretim hatları, makineler, prosesler, pompa sistemleri, fan sistemleri, konveyörler ve enerji izleme altyapıları için güvenilir ve sürdürülebilir çözümler geliştiriyoruz.
+
+Projelerde saha keşfi, otomasyon projelendirme, pano ve ekipman seçimi, PLC/HMI/SCADA yazılımı, haberleşme altyapısı, test, devreye alma ve teknik destek süreçlerini uçtan uca yönetiyoruz.
+
+### Hizmetlerimiz
+
+* PLC Yazılım Geliştirme Siemens, Schneider vb.
+* SCADA Sistemi Kurulumu ve İzleme
+* Endüstriyel Otomasyon Projelendirme
+* Makine Otomasyonu ve Proses Kontrolü
+* Sürücü VFD ve Motor Kontrol Sistemleri
+* Uzaktan İzleme ve Kontrol Sistemleri
+* Sistem Entegrasyonu ve Devreye Alma
+* HMI Operatör Paneli Tasarımı
+* Endüstriyel Haberleşme Sistemleri
+* Otomasyon Pano Revizyonu
+* Veri Toplama ve Raporlama Sistemleri
