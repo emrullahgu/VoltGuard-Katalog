@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VoltGuard Metin Düzenleyici</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-logo">⚡</span>
+      <h1>VoltGuard Metin Düzenleyici</h1>
+    </div>
+    <div class="header-actions">
+      <span id="saveStatus" class="save-status" aria-live="polite">Hazır</span>
+    </div>
+  </header>
+
+  <!-- Menu bar -->
+  <nav class="menu-bar" role="menubar">
+    <div class="menu" role="none">
+      <button class="menu-btn" data-menu="file" aria-haspopup="true" aria-expanded="false">Dosya</button>
+      <div class="menu-dropdown" data-menu-for="file" role="menu">
+        <button data-cmd="file-new" role="menuitem">Yeni <span class="shortcut">Ctrl+Alt+N</span></button>
+        <button data-cmd="file-open" role="menuitem">Aç… <span class="shortcut">Ctrl+O</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="file-save-html" role="menuitem">HTML Olarak Kaydet <span class="shortcut">Ctrl+S</span></button>
+        <button data-cmd="file-save-txt" role="menuitem">Düz Metin Olarak Kaydet</button>
+        <button data-cmd="file-print" role="menuitem">Yazdır / PDF <span class="shortcut">Ctrl+P</span></button>
+      </div>
+    </div>
+
+    <div class="menu" role="none">
+      <button class="menu-btn" data-menu="edit" aria-haspopup="true" aria-expanded="false">Düzen</button>
+      <div class="menu-dropdown" data-menu-for="edit" role="menu">
+        <button data-cmd="undo" role="menuitem">Geri Al <span class="shortcut">Ctrl+Z</span></button>
+        <button data-cmd="redo" role="menuitem">Yinele <span class="shortcut">Ctrl+Y</span></button>
+        <div class="menu-sep"></div>
+        <button data-cmd="cut" role="menuitem">Kes <span class="shortcut">Ctrl+X</span></button>
+        <button data-cmd="copy" role="menuitem">Kopyala <span class="shortcut">Ctrl+C</span></button>
+        <button data-cmd="paste-plain" role="menuitem">Düz Metin Olarak Yapıştır</button>
+        <div class="menu-sep"></div>
+        <button data-cmd="selectAll" role="menuitem">Tümünü Seç <span class="shortcut">Ctrl+A</span></button>
+        <button data-cmd="find" role="menuitem">Bul ve Değiştir <span class="shortcut">Ctrl+F</span></button>
+      </div>
+    </div>
+
+    <div class="menu" role="none">
+      <button class="menu-btn" data-menu="insert" aria-haspopup="true" aria-expanded="false">Ekle</button>
+      <div class="menu-dropdown" data-menu-for="insert" role="menu">
+        <button data-cmd="insert-link" role="menuitem">Bağlantı…</button>
+        <button data-cmd="insert-image" role="menuitem">Resim…</button>
+        <button data-cmd="insert-table" role="menuitem">Tablo…</button>
+        <button data-cmd="insert-hr" role="menuitem">Yatay Çizgi</button>
+        <div class="menu-sep"></div>
+        <button data-cmd="insert-signature" role="menuitem">İmza Ekle… <span class="shortcut">Ctrl+Alt+S</span></button>
+      </div>
+    </div>
+
+    <div class="menu" role="none">
+      <button class="menu-btn" data-menu="view" aria-haspopup="true" aria-expanded="false">Görünüm</button>
+      <div class="menu-dropdown" data-menu-for="view" role="menu">
+        <button data-cmd="toggle-theme" role="menuitem">Koyu / Açık Tema</button>
+        <button data-cmd="toggle-fullscreen" role="menuitem">Tam Ekran <span class="shortcut">F11</span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Toolbar -->
+  <div class="toolbar" role="toolbar" aria-label="Biçimlendirme araç çubuğu">
+    <div class="tool-group">
+      <button class="tool" data-cmd="undo" title="Geri Al (Ctrl+Z)" aria-label="Geri Al">↶</button>
+      <button class="tool" data-cmd="redo" title="Yinele (Ctrl+Y)" aria-label="Yinele">↷</button>
+    </div>
+
+    <div class="tool-group">
+      <select class="tool-select" id="blockSelect" title="Paragraf Stili" aria-label="Paragraf Stili">
+        <option value="p">Paragraf</option>
+        <option value="h1">Başlık 1</option>
+        <option value="h2">Başlık 2</option>
+        <option value="h3">Başlık 3</option>
+        <option value="h4">Başlık 4</option>
+        <option value="blockquote">Alıntı</option>
+        <option value="pre">Kod Bloğu</option>
+      </select>
+
+      <select class="tool-select" id="fontSelect" title="Yazı Tipi" aria-label="Yazı Tipi">
+        <option value="">Yazı Tipi</option>
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="'Courier New', monospace">Courier New</option>
+        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+        <option value="Verdana, sans-serif">Verdana</option>
+        <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+        <option value="Tahoma, sans-serif">Tahoma</option>
+      </select>
+
+      <select class="tool-select tool-size" id="sizeSelect" title="Yazı Boyutu" aria-label="Yazı Boyutu">
+        <option value="">Boyut</option>
+        <option value="1">Çok Küçük</option>
+        <option value="2">Küçük</option>
+        <option value="3" selected>Normal</option>
+        <option value="4">Orta</option>
+        <option value="5">Büyük</option>
+        <option value="6">Çok Büyük</option>
+        <option value="7">Dev</option>
+      </select>
+    </div>
+
+    <div class="tool-group">
+      <button class="tool" data-cmd="bold" title="Kalın (Ctrl+B)" aria-label="Kalın"><b>B</b></button>
+      <button class="tool" data-cmd="italic" title="İtalik (Ctrl+I)" aria-label="İtalik"><i>I</i></button>
+      <button class="tool" data-cmd="underline" title="Altı Çizili (Ctrl+U)" aria-label="Altı Çizili"><u>U</u></button>
+      <button class="tool" data-cmd="strikeThrough" title="Üstü Çizili" aria-label="Üstü Çizili"><s>S</s></button>
+      <button class="tool" data-cmd="subscript" title="Alt Simge" aria-label="Alt Simge">X₂</button>
+      <button class="tool" data-cmd="superscript" title="Üst Simge" aria-label="Üst Simge">X²</button>
+    </div>
+
+    <div class="tool-group">
+      <label class="tool color-tool" title="Yazı Rengi">
+        <span>A</span>
+        <input type="color" id="foreColor" value="#000000" aria-label="Yazı Rengi" />
+      </label>
+      <label class="tool color-tool" title="Arka Plan Rengi">
+        <span>🖍</span>
+        <input type="color" id="backColor" value="#ffff00" aria-label="Arka Plan Rengi" />
+      </label>
+      <button class="tool" data-cmd="removeFormat" title="Biçimlendirmeyi Temizle" aria-label="Biçimlendirmeyi Temizle">⌫</button>
+    </div>
+
+    <div class="tool-group">
+      <button class="tool" data-cmd="justifyLeft" title="Sola Hizala" aria-label="Sola Hizala">⯇</button>
+      <button class="tool" data-cmd="justifyCenter" title="Ortala" aria-label="Ortala">≡</button>
+      <button class="tool" data-cmd="justifyRight" title="Sağa Hizala" aria-label="Sağa Hizala">⯈</button>
+      <button class="tool" data-cmd="justifyFull" title="İki Yana Yasla" aria-label="İki Yana Yasla">☰</button>
+    </div>
+
+    <div class="tool-group">
+      <button class="tool" data-cmd="insertUnorderedList" title="Madde İşaretli Liste" aria-label="Madde İşaretli Liste">• ≣</button>
+      <button class="tool" data-cmd="insertOrderedList" title="Numaralı Liste" aria-label="Numaralı Liste">1. ≣</button>
+      <button class="tool" data-cmd="outdent" title="Girintiyi Azalt" aria-label="Girintiyi Azalt">⇤</button>
+      <button class="tool" data-cmd="indent" title="Girintiyi Artır" aria-label="Girintiyi Artır">⇥</button>
+    </div>
+
+    <div class="tool-group">
+      <button class="tool" data-cmd="insert-link" title="Bağlantı Ekle" aria-label="Bağlantı Ekle">🔗</button>
+      <button class="tool" data-cmd="unlink" title="Bağlantıyı Kaldır" aria-label="Bağlantıyı Kaldır">⛓︎</button>
+      <button class="tool" data-cmd="insert-image" title="Resim Ekle" aria-label="Resim Ekle">🖼</button>
+      <button class="tool" data-cmd="insert-table" title="Tablo Ekle" aria-label="Tablo Ekle">▦</button>
+      <button class="tool" data-cmd="insert-hr" title="Yatay Çizgi" aria-label="Yatay Çizgi">―</button>
+    </div>
+
+    <div class="tool-group">
+      <button class="tool primary" data-cmd="insert-signature" title="İmza Ekle (Ctrl+Alt+S)" aria-label="İmza Ekle">✒ İmza</button>
+    </div>
+
+    <div class="tool-group tool-group-right">
+      <button class="tool" data-cmd="file-save-html" title="Kaydet (Ctrl+S)" aria-label="Kaydet">💾</button>
+      <button class="tool" data-cmd="file-print" title="Yazdır (Ctrl+P)" aria-label="Yazdır">🖨</button>
+    </div>
+  </div>
+
+  <!-- Editor area -->
+  <main class="editor-wrap">
+    <div
+      id="editor"
+      class="editor"
+      contenteditable="true"
+      spellcheck="true"
+      role="textbox"
+      aria-multiline="true"
+      aria-label="Belge içeriği"
+    >
+      <h1>VoltGuard Metin Düzenleyici'ye Hoş Geldiniz</h1>
+      <p>Bu, tarayıcınızda çalışan <b>tam kapsamlı</b> bir metin düzenleyicidir. Metninizi biçimlendirebilir, tablolar ve resimler ekleyebilir ve belgenize <i>dijital imza</i> iliştirebilirsiniz.</p>
+      <ul>
+        <li>Zengin metin biçimlendirme (kalın, italik, başlıklar, listeler, hizalama…)</li>
+        <li>Resim, tablo, bağlantı ve yatay çizgi ekleme</li>
+        <li>Fare / dokunmatik ekran ile çizilebilen imza</li>
+        <li>HTML veya düz metin olarak kaydetme, yazdırma ve PDF'e aktarma</li>
+        <li>Otomatik kaydetme, koyu / açık tema, kısayollar</li>
+      </ul>
+      <p>Başlamak için bu metni silip yazmaya başlayabilirsiniz.</p>
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <footer class="status-bar" aria-live="polite">
+    <span id="wordCount">0 kelime</span>
+    <span class="sep">·</span>
+    <span id="charCount">0 karakter</span>
+    <span class="sep">·</span>
+    <span id="selectionInfo">Seçim yok</span>
+  </footer>
+
+  <!-- Signature modal -->
+  <div class="modal" id="signatureModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="sigTitle">İmza Ekle</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint">Aşağıdaki alana fare veya dokunmatik ekranla imzanızı çizin.</p>
+        <div class="signature-canvas-wrap">
+          <canvas id="signatureCanvas" width="600" height="220" aria-label="İmza çizim alanı"></canvas>
+        </div>
+        <div class="signature-controls">
+          <label>
+            Kalem Rengi
+            <input type="color" id="sigColor" value="#0b2447" />
+          </label>
+          <label>
+            Kalınlık
+            <input type="range" id="sigWidth" min="1" max="8" value="2.5" step="0.5" />
+          </label>
+          <label class="chk">
+            <input type="checkbox" id="sigTransparent" checked />
+            Şeffaf arka plan
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="sigClear" type="button">Temizle</button>
+        <div class="grow"></div>
+        <button class="btn" data-close type="button">İptal</button>
+        <button class="btn primary" id="sigInsert" type="button">Belgeye Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link modal -->
+  <div class="modal" id="linkModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="linkTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog small">
+      <div class="modal-header">
+        <h2 id="linkTitle">Bağlantı Ekle</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>Metin</span>
+          <input type="text" id="linkText" placeholder="Görüntülenecek metin" />
+        </label>
+        <label class="field">
+          <span>URL</span>
+          <input type="url" id="linkUrl" placeholder="https://example.com" />
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">İptal</button>
+        <button class="btn primary" id="linkInsert" type="button">Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table modal -->
+  <div class="modal" id="tableModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tableTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog small">
+      <div class="modal-header">
+        <h2 id="tableTitle">Tablo Ekle</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>Satır</span>
+          <input type="number" id="tableRows" min="1" max="50" value="3" />
+        </label>
+        <label class="field">
+          <span>Sütun</span>
+          <input type="number" id="tableCols" min="1" max="20" value="3" />
+        </label>
+        <label class="chk">
+          <input type="checkbox" id="tableHeader" checked /> İlk satır başlık olsun
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">İptal</button>
+        <button class="btn primary" id="tableInsert" type="button">Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Find & Replace modal -->
+  <div class="modal" id="findModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="findTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog small">
+      <div class="modal-header">
+        <h2 id="findTitle">Bul ve Değiştir</h2>
+        <button class="modal-close" data-close aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>Bul</span>
+          <input type="text" id="findText" />
+        </label>
+        <label class="field">
+          <span>Değiştir</span>
+          <input type="text" id="replaceText" />
+        </label>
+        <label class="chk">
+          <input type="checkbox" id="findCase" /> Büyük/küçük harfe duyarlı
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-close type="button">Kapat</button>
+        <button class="btn" id="replaceOne" type="button">Değiştir</button>
+        <button class="btn primary" id="replaceAll" type="button">Tümünü Değiştir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for open -->
+  <input type="file" id="fileInput" accept=".html,.htm,.txt" hidden />
+  <!-- Hidden file input for images -->
+  <input type="file" id="imgInput" accept="image/*" hidden />
+
+  <script src="app.js"></script>
+</body>
+</html>
