@@ -1,0 +1,1 @@
+# VoltGuard-Katalog
